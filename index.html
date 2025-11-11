@@ -178,6 +178,7 @@
             margin-bottom: 1.25rem;
             color: white;
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .stats-grid {
@@ -194,6 +195,8 @@
             padding: 1rem;
             text-align: center;
             transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .stat-card:hover {
@@ -206,11 +209,13 @@
             font-weight: 700;
             display: block;
             margin-bottom: 0.25rem;
+            line-height: 1.2;
         }
 
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.9;
+            line-height: 1.4;
         }
 
         .progress-bar-container {
@@ -220,6 +225,7 @@
             height: 30px;
             overflow: hidden;
             position: relative;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .progress-bar {
@@ -231,6 +237,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 0.9rem;
+            min-width: 50px;
         }
 
         .progress-text {
@@ -242,6 +249,7 @@
             font-size: 0.9rem;
             color: white;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            z-index: 10;
         }
 
         /* Controls Section */
@@ -706,7 +714,19 @@
             }
 
             .stat-value {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
+            }
+
+            .stat-label {
+                font-size: 0.8rem;
+            }
+
+            .stats-container {
+                padding: 1rem;
+            }
+
+            .stats-container h2 {
+                font-size: 1.25rem !important;
             }
         }
 
@@ -962,23 +982,18 @@
 
         // Update statistics
         function updateStatistics() {
-            const today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
-            
             let totalTasks = 0;
             let completedCount = 0;
             
+            // Count all tasks (lessons + reviews) regardless of date
             schedule.forEach((tasks, dateStr) => {
-                const taskDate = new Date(dateStr + 'T00:00:00Z');
-                if (taskDate.getTime() <= today.getTime()) {
-                    tasks.forEach(task => {
-                        totalTasks++;
-                        const taskKey = getTaskKey(dateStr, task.name, task.type === 'review' ? task.review : 0);
-                        if (completedTasks.has(taskKey)) {
-                            completedCount++;
-                        }
-                    });
-                }
+                tasks.forEach(task => {
+                    totalTasks++;
+                    const taskKey = getTaskKey(dateStr, task.name, task.type === 'review' ? task.review : 0);
+                    if (completedTasks.has(taskKey)) {
+                        completedCount++;
+                    }
+                });
             });
             
             const pendingCount = totalTasks - completedCount;
@@ -1346,11 +1361,20 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `جدول المذاكرة⭐${new Date().toISOString().split('T')[0]}.html`;
+            
+            // Create filename with date and time
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            a.download = `jadwal_moddakr-${year}-${month}-${day}_${hours}-${minutes}.html`;
             a.click();
             URL.revokeObjectURL(url);
             
-            showMessage('تم تنزيل الجدول! افتح هذا الملف لاستعادة بياناتك.');
+            showMessage('تم تنزيل الجدول بنجاح! 📥');
         }
 
         // Upload schedule
