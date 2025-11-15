@@ -1,1699 +1,705 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Study Schedule Calendar - Enhanced Version</title>
-    <style>
-        /* CSS Variables for Theme */
-        :root {
-            --bg-primary: #f8f9fa;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f3f4f6;
-            --text-primary: #333;
-            --text-secondary: #6b7280;
-            --text-tertiary: #374151;
-            --border-color: #e2eeef;
-            --border-color-light: #e5e7eb;
-            --shadow-color: rgba(0,0,0,0.1);
-            --control-bg: #ffffff;
-            --control-border: #6366f1;
-            --day-hover: #eef2ff;
-            --month-header-bg: #4a5568;
-            --month-header-text: #ffffff;
-        }
-
-        [data-theme="dark"] {
-            --bg-primary: #0a1f1a;
-            --bg-secondary: #0d2922;
-            --bg-tertiary: #153830;
-            --text-primary: #e8f5f1;
-            --text-secondary: #a0c4bc;
-            --text-tertiary: #c8e6de;
-            --border-color: #1a4d3f;
-            --border-color-light: #1a4d3f;
-            --shadow-color: rgba(0,0,0,0.4);
-            --control-bg: #0d2922;
-            --control-border: #10b981;
-            --day-hover: #153830;
-            --month-header-bg: #0a1f1a;
-            --month-header-text: #e8f5f1;
-        }
-
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        /* Utility Classes */
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .text-center { text-align: center; }
-        .font-bold { font-weight: 700; }
-        .font-semibold { font-weight: 600; }
-        .uppercase { text-transform: uppercase; }
-        
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .flex-grow { flex-grow: 1; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .justify-between { justify-content: space-between; }
-        .gap-3 { gap: 0.75rem; }
-        .gap-5 { gap: 1.25rem; }
-
-        .hidden { display: none !important; }
-        
-        .grid { display: grid; }
-        .grid-cols-7 { grid-template-columns: repeat(7, minmax(0, 1fr)); }
-
-        .p-3 { padding: 0.75rem; }
-        .p-4 { padding: 1rem; }
-        .p-5 { padding: 1.25rem; }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        
-        .mb-3 { margin-bottom: 0.75rem; }
-        .mb-5 { margin-bottom: 1.25rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-5 { margin-top: 1.25rem; }
-
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-xl { border-radius: 0.75rem; }
-
-        .shadow-md { box-shadow: 0 4px 6px -1px var(--shadow-color); }
-        .shadow-xl { box-shadow: 0 20px 25px -5px var(--shadow-color); }
-
-        /* Header with Theme Toggle */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1.25rem 1rem 0;
-        }
-
-        h1 {
-            font-size: 1.875rem;
-            font-weight: 700;
-            color: var(--text-tertiary);
-            margin: 0;
-        }
-
-        /* Theme Toggle Button */
-        .theme-toggle {
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 2rem;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow-color);
-        }
-
-        .theme-icon {
-            font-size: 1.2rem;
-        }
-
-        h3 {
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--text-secondary);
-            margin-bottom: 0.75rem;
-        }
-
-        /* Message Box */
-        #message-box {
-            max-width: 1280px;
-            margin: 1.25rem auto;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            text-align: center;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .msg-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-        }
-
-        .msg-success {
-            background-color: #d1fae5;
-            color: #065f46;
-        }
-
-        /* Statistics Styles */
-        .stats-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            color: white;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 0.5rem;
-            padding: 1rem;
-            text-align: center;
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.25);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            display: block;
-            margin-bottom: 0.25rem;
-            line-height: 1.2;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            line-height: 1.4;
-        }
-
-        .progress-bar-container {
-            margin-top: 1rem;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 1rem;
-            height: 30px;
-            overflow: hidden;
-            position: relative;
-            -webkit-tap-highlight-color: transparent;
-            direction: ltr;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
-            transition: width 0.5s ease;
-            font-weight: 700;
-            font-size: 0.9rem;
-            min-width: 0;
-            border-radius: 1rem;
-        }
-
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: white;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        /* Controls Section */
-        #controls {
-            background-color: var(--control-bg);
-            border-radius: 0.75rem;
-            border-right: 8px solid var(--control-border);
-            margin-bottom: 1.25rem;
-            transition: background-color 0.3s ease;
-        }
-
-        .control-section {
-            border: 1px dashed var(--border-color);
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-
-        .control-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            background-color: var(--bg-secondary);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .control-input:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        .btn-green {
-            background-color: #10b981;
-            color: white;
-        }
-
-        .btn-green:hover {
-            background-color: #059669;
-        }
-
-        .btn-red {
-            background-color: #ef4444;
-            color: white;
-        }
-
-        .btn-red:hover {
-            background-color: #dc2626;
-        }
-
-        .btn-blue {
-            background-color: #3b82f6;
-            color: white;
-        }
-
-        .btn-blue:hover {
-            background-color: #2563eb;
-        }
-
-        .btn-indigo {
-            background-color: #6366f1;
-            color: white;
-        }
-
-        .btn-indigo:hover {
-            background-color: #4f46e5;
-        }
-
-        /* Calendar Styles */
-        .month-grid {
-            box-shadow: 0 4px 12px var(--shadow-color);
-            border-radius: 0.5rem;
-            overflow: hidden;
-            margin-bottom: 2rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .month-header {
-            background-color: var(--month-header-bg);
-            color: var(--month-header-text);
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            padding: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .week-header {
-            background-color: var(--bg-tertiary);
-            border-bottom: 2px solid var(--border-color-light);
-            transition: all 0.3s ease;
-        }
-
-        .day-name {
-            text-align: center;
-            padding: 0.5rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .day-cell {
-            min-height: 140px;
-            border: 1px solid var(--border-color);
-            padding: 0.5rem;
-            font-size: 0.8rem;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.2s ease;
-            background-color: var(--bg-secondary);
-        }
-
-        .day-cell:hover {
-            background-color: var(--day-hover);
-        }
-
-        .day-number {
-            font-weight: 700;
-            color: var(--text-tertiary);
-            margin-bottom: 0.25rem;
-        }
-
-        .tasks {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-            gap: 0.25rem;
-            padding: 0.25rem;
-        }
-
-        /* Task Styles - Enhanced */
-        .task {
-            padding: 6px 8px;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-bottom: 3px;
-            font-size: 0.75rem;
-            position: relative;
-        }
-
-        .task:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            z-index: 10;
-        }
-
-        .task:active {
-            transform: translateY(-1px) scale(1.01);
-        }
-
-        .new-lesson {
-            background-color: #d1fae5;
-            color: #10b981;
-            border: 2px solid #6ee7b7;
-        }
-
-        .new-lesson:hover {
-            background-color: #a7f3d0;
-            border-color: #34d399;
-        }
-
-        .review-task {
-            background-color: #fef3c7;
-            color: #f59e0b;
-            border: 2px solid #fcd34d;
-        }
-
-        .review-task:hover {
-            background-color: #fde68a;
-            border-color: #fbbf24;
-        }
-
-        .first-lesson {
-            background-color: #3b82f6 !important;
-            color: white !important;
-            border: 2px solid #2563eb !important;
-        }
-
-        .first-lesson:hover {
-            background-color: #2563eb !important;
-            border-color: #1d4ed8 !important;
-        }
-
-        .task.completed {
-            opacity: 0.6;
-            text-decoration: line-through;
-            position: relative;
-        }
-
-        .task.completed::after {
-            content: '✓';
-            position: absolute;
-            right: 4px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1rem;
-            font-weight: bold;
-            color: #10b981;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal.active {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { 
-                transform: translateY(100px);
-                opacity: 0;
+    <meta name="theme-color" content="#081c15">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="مددكر">
+    <title>Moddakr - مددكر</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'theme-dark-bg': '#081c15',
+              'theme-dark-card': '#0a2e2b',
+              'theme-accent': '#63f163',
+              'theme-border': 'rgba(99, 241, 99, 0.3)',
+              'theme-text': '#e5e7eb',
+            },
+            keyframes: {
+              'gentle-shake': {
+                '0%, 100%': { transform: 'translateX(0)' },
+                '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-2px)' },
+                '20%, 40%, 60%, 80%': { transform: 'translateX(2px)' },
+              }
+            },
+            animation: {
+              'gentle-shake': 'gentle-shake 3s infinite',
+            },
+            boxShadow: {
+              'glow-accent': '0 0 15px rgba(99, 241, 99, 0.6)',
             }
-            to { 
-                transform: translateY(0);
-                opacity: 1;
-            }
+          }
         }
-
-        .modal-content {
-            background-color: var(--bg-secondary);
-            border-radius: 1rem;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 0.3s ease;
-            border: 2px solid var(--border-color);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-tertiary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.2s;
-            padding: 0;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .modal-close:hover {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            color: var(--text-primary);
-        }
-
-        .detail-row {
-            display: flex;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            min-width: 120px;
-            font-size: 0.9rem;
-        }
-
-        .detail-value {
-            color: var(--text-tertiary);
-            flex: 1;
-            font-size: 0.95rem;
-        }
-
-        .lesson-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-
-        .badge-new {
-            background-color: #d1fae5;
-            color: #10b981;
-        }
-
-        .badge-review {
-            background-color: #fef3c7;
-            color: #f59e0b;
-        }
-
-        .badge-first {
-            background-color: #3b82f6;
-            color: white;
-        }
-
-        .completion-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid var(--border-color);
-            text-align: center;
-        }
-
-        .completion-checkbox {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            background-color: var(--bg-tertiary);
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .completion-checkbox:hover {
-            background-color: var(--day-hover);
-        }
-
-        .completion-checkbox input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            accent-color: #10b981;
-        }
-
-        .completion-checkbox label {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            cursor: pointer;
-        }
-
-        .rest-day {
-            font-size: 0.75rem;
-            text-align: center;
-            color: var(--text-secondary);
-            font-style: italic;
-            margin-top: 0.5rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            h1 {
-                font-size: 1.5rem;
-            }
-
-            .flex-col-mobile {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .day-cell {
-                min-height: 100px;
-                padding: 0.25rem;
-                font-size: 0.7rem;
-            }
-
-            .day-number {
-                font-size: 0.8rem;
-            }
-
-            .task {
-                font-size: 0.7rem;
-                padding: 4px 6px;
-            }
-
-            .modal-content {
-                width: 95%;
-                padding: 1.5rem;
-            }
-
-            .modal-title {
-                font-size: 1.25rem;
-            }
-
-            .detail-label {
-                min-width: 100px;
-                font-size: 0.85rem;
-            }
-
-            .detail-value {
-                font-size: 0.85rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stat-value {
-                font-size: 1.75rem;
-            }
-
-            .stat-label {
-                font-size: 0.8rem;
-            }
-
-            .stats-container {
-                padding: 1rem;
-            }
-
-            .stats-container h2 {
-                font-size: 1.25rem !important;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .flex-row-desktop {
-                flex-direction: row;
-            }
-
-            .btn-auto-width {
-                width: auto;
-            }
-        }
-
-        /* Additional Utilities */
-        .text-sm { font-size: 0.875rem; }
-        .text-xs { font-size: 0.75rem; }
-        .text-xl { font-size: 1.25rem; }
-        .text-indigo { color: #6366f1; }
-        
-        #lesson-info {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            text-align: center;
-        }
-
-        @media (min-width: 768px) {
-            #lesson-info {
-                text-align: right;
-            }
-        }
-
-        /* Dark theme specific adjustments */
-        [data-theme="dark"] .msg-error {
-            background-color: #7f1d1d;
-            color: #fca5a5;
-        }
-
-        [data-theme="dark"] .msg-success {
-            background-color: #064e3b;
-            color: #6ee7b7;
-        }
-
-        [data-theme="dark"] .control-section {
-            background-color: rgba(16, 185, 129, 0.05);
-            border-color: #1a4d3f;
-        }
-
-        [data-theme="dark"] #controls {
-            background-color: var(--control-bg);
-            border-right: 8px solid #10b981;
-        }
-
-        [data-theme="dark"] .stats-container {
-            background: linear-gradient(135deg, #0f766e 0%, #065f46 100%);
-        }
-
-        [data-theme="dark"] .control-input {
-            background-color: #153830;
-            border-color: #1a4d3f;
-            color: var(--text-primary);
-        }
-
-        [data-theme="dark"] .control-input:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-
-        [data-theme="dark"] .modal-content {
-            background-color: #0d2922;
-            border: 2px solid #1a4d3f;
-        }
-
-        [data-theme="dark"] .month-grid {
-            background: #0d2922;
-            border: 1px solid #1a4d3f;
-        }
-
-        [data-theme="dark"] .day-cell {
-            background-color: #0d2922;
-            border-color: #1a4d3f;
-        }
-
-        [data-theme="dark"] .btn-green {
-            background-color: #10b981;
-        }
-
-        [data-theme="dark"] .btn-green:hover {
-            background-color: #059669;
-        }
-
-        [data-theme="dark"] .btn-indigo {
-            background-color: #10b981;
-        }
-
-        [data-theme="dark"] .btn-indigo:hover {
-            background-color: #059669;
-        }
-    </style>
+      }
+    </script>
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIti02K/Yr9mD2LEg2YTZhNmF2LDYp9mD2LHYqSIsCiAgInNob3J0X25hbWUiOiAi2YXYr9iv2YPYsSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDgxYzE1IiwKICAidGhlbWVfY29sb3IiOiAiIzA4MWMxNSIsCiAgImljb25zIjogW10KfQ==">
 </head>
-<body>
-
-    <div class="header-container">
-        <h1>💡 (مددكر) لمساعدة طالب العلم على الحفظ والإستذكار</h1>
-        <button id="theme-toggle" class="theme-toggle">
-            <span class="theme-icon">🌙</span>
-            <span class="theme-text">الوضع الليلي</span>
-        </button>
-    </div>
-
-    <div class="header-container">
-        <h1>🗓️ خطة دراسة التكرار المتباعد الديناميكية</h1>
-    </div>
+<body class="bg-gray-50 dark:bg-theme-dark-bg text-gray-800 dark:text-theme-text min-h-screen font-[system-ui]">
     
-    <div id="message-box" class="hidden"></div>
-
-    <div class="container">
-        <!-- Statistics Section -->
-        <div class="stats-container">
-            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">📊 إحصائيات الأداء</h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <span class="stat-value" id="total-tasks-stat">0</span>
-                    <span class="stat-label">إجمالي المهام</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" id="completed-tasks-stat">0</span>
-                    <span class="stat-label">المهام المنجزة</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" id="pending-tasks-stat">0</span>
-                    <span class="stat-label">المهام المتبقية</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-value" id="completion-percentage-stat">0%</span>
-                    <span class="stat-label">نسبة الإنجاز</span>
+    <div class="container mx-auto px-4 pb-8">
+        <!-- Header -->
+        <header class="py-5">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <h1 class="text-3xl font-bold text-gray-700 dark:text-theme-text">
+                    💡 (مددكر) لمساعدة طالب العلم على الحفظ والإستذكار
+                </h1>
+                <div class="flex items-center gap-3">
+                    <button id="install-btn" class="flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-white bg-emerald-500 hover:bg-emerald-600 dark:bg-theme-accent dark:text-theme-dark-bg dark:hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 shadow-lg animate-gentle-shake focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-400 dark:focus:ring-offset-theme-dark-bg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>تحميل التطبيق</span>
+                    </button>
+                    <button id="theme-toggle" class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200 transition-transform duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900">
+                        <span class="text-xl" id="theme-icon">☀️</span>
+                        <span id="theme-text">الوضع النهاري</span>
+                    </button>
                 </div>
             </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="progress-bar" style="width: 0%;">
+            <div class="text-center mt-2">
+                <h2 class="text-2xl font-bold text-gray-700 dark:text-theme-text">
+                    🗓️ خطة دراسة التكرار المتباعد الديناميكية
+                </h2>
+            </div>
+        </header>
+
+        <!-- Message Box -->
+        <div id="message-box" class="hidden"></div>
+
+        <!-- Statistics -->
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 dark:from-theme-dark-card dark:to-theme-dark-bg rounded-xl p-6 mb-5 text-white shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4">📊 إحصائيات الأداء</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-4 text-center transition-transform duration-300 hover:-translate-y-1">
+                    <span class="block text-3xl md:text-4xl font-bold" id="total-tasks">0</span>
+                    <span class="block text-sm opacity-90">إجمالي المهام</span>
                 </div>
-                <div class="progress-text" id="progress-text">0%</div>
+                <div class="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-4 text-center transition-transform duration-300 hover:-translate-y-1">
+                    <span class="block text-3xl md:text-4xl font-bold" id="completed-tasks">0</span>
+                    <span class="block text-sm opacity-90">المهام المنجزة</span>
+                </div>
+                <div class="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-4 text-center transition-transform duration-300 hover:-translate-y-1">
+                    <span class="block text-3xl md:text-4xl font-bold" id="pending-tasks">0</span>
+                    <span class="block text-sm opacity-90">المهام المتبقية</span>
+                </div>
+                <div class="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-4 text-center transition-transform duration-300 hover:-translate-y-1">
+                    <span class="block text-3xl md:text-4xl font-bold" id="completion-percentage">0%</span>
+                    <span class="block text-sm opacity-90">نسبة الإنجاز</span>
+                </div>
+            </div>
+            <div class="mt-6 bg-white/20 dark:bg-black/30 rounded-full h-8 relative">
+                <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-emerald-500 dark:bg-theme-accent h-full rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-shadow" id="progress-text">0%</div>
             </div>
         </div>
 
-        <div id="controls" class="shadow-xl flex flex-col gap-5 p-5">
-            
-            <div id="lesson-info">
-                إجمالي الدروس المضافة: <span id="lesson-count-display" class="text-indigo">0</span>
+        <!-- Controls -->
+        <div class="bg-white dark:bg-theme-dark-card/80 rounded-xl shadow-xl p-5 mb-8 space-y-5">
+            <div class="text-center md:text-right text-xl font-semibold text-gray-700 dark:text-theme-text">
+                إجمالي الدروس المضافة: <span class="text-indigo-500 dark:text-theme-accent" id="lesson-count">0</span>
             </div>
-            
-            <!-- Add New Lesson Section -->
-            <div class="control-section">
-                <h3>➕ إضافة درس جديد للمراجعة</h3>
-                <div class="flex flex-col flex-row-desktop gap-3 items-center">
-                    <input type="text" id="new-lesson-name" class="control-input" placeholder="عنوان الدرس (مثال: الفصل العاشر)" required>
-                    <input type="date" id="new-lesson-date" class="control-input" required>
-                    <button id="add-lesson-btn" class="btn btn-green btn-auto-width">إضافة</button>
+
+            <!-- Add Lesson -->
+            <div class="border border-dashed border-gray-200 dark:border-theme-border rounded-lg p-4 bg-white/5">
+                <h3 class="text-sm uppercase font-bold text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                    📝 إضافة درس جديد للمراجعة
+                </h3>
+                <div class="flex flex-col md:flex-row gap-3 items-end">
+                    <div class="flex flex-col flex-grow w-full">
+                        <label for="lessonName" class="text-xs font-semibold mb-1 text-gray-500 dark:text-gray-400/80">اسم الدرس</label>
+                        <input id="lessonName" class="w-full p-3 border rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:shadow-[0_0_10px_rgba(99,241,99,0.5),inset_0_1px_2px_rgba(0,0,0,0.5)] [&::-webkit-calendar-picker-indicator]:dark:filter [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:dark:brightness-75 border-2 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-theme-accent/30" placeholder="مثال: حفظ الآيات من 1-5 سورة البقرة" type="text">
+                    </div>
+                    <div class="flex flex-col w-full md:w-auto">
+                        <label for="lessonDate" class="text-xs font-semibold mb-1 text-gray-500 dark:text-gray-400/80">حدد تاريخ الدرس</label>
+                        <input id="lessonDate" class="w-full p-3 border rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:shadow-[0_0_10px_rgba(99,241,99,0.5),inset_0_1px_2px_rgba(0,0,0,0.5)] [&::-webkit-calendar-picker-indicator]:dark:filter [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:dark:brightness-75 border-2 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-theme-accent/30" type="date">
+                    </div>
+                    <button id="add-lesson" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-emerald-500 text-white border-transparent hover:bg-emerald-600 active:bg-emerald-700 focus:ring-emerald-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        <span>إضافة</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Delete Lesson Section -->
-            <div class="control-section">
-                <h3>❌ حذف درس مخصص</h3>
-                <div class="flex flex-col flex-row-desktop gap-3 items-center">
-                    <input type="text" id="delete-lesson-name" class="control-input" placeholder="أدخل اسم الدرس للحذف">
-                    <button id="delete-lesson-btn" class="btn btn-red btn-auto-width">حذف</button>
+            <!-- Delete Lesson -->
+            <div class="border border-dashed border-gray-200 dark:border-theme-border rounded-lg p-4 bg-white/5">
+                <h3 class="text-sm uppercase font-bold text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                    🗑️ حذف درس مخصص
+                </h3>
+                <div class="flex flex-col md:flex-row gap-3 items-center">
+                    <input id="delete-lesson-name" class="w-full p-3 border rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:shadow-[0_0_10px_rgba(99,241,99,0.5),inset_0_1px_2px_rgba(0,0,0,0.5)] [&::-webkit-calendar-picker-indicator]:dark:filter [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:dark:brightness-75 flex-grow" placeholder="أدخل اسم الدرس للحذف" type="text">
+                    <button id="delete-lesson" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-red-500 text-white border-transparent hover:bg-red-600 active:bg-red-700 focus:ring-red-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>حذف</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- Save/Load Section -->
-            <div class="control-section">
-                <h3>💾 حفظ وتحميل التقدم</h3>
-                <div class="flex flex-col flex-row-desktop gap-3 items-center">
-                    <button id="download-btn" class="btn btn-indigo btn-auto-width">📥 تحميل الجدول</button>
-                    <input type="file" id="upload-input" accept=".html" style="display: none;">
-                    <button id="upload-btn" class="btn btn-blue btn-auto-width">📤 رفع الجدول</button>
+            <!-- Save/Load -->
+            <div class="border border-dashed border-gray-200 dark:border-theme-border rounded-lg p-4 bg-white/5">
+                <h3 class="text-sm uppercase font-bold text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-2">
+                    💾 حفظ تقدمك الدراسي
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button id="download-schedule" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-indigo-500 text-white border-transparent hover:bg-indigo-600 active:bg-indigo-700 focus:ring-indigo-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>تحميل الجدول</span>
+                    </button>
+                    <input id="upload-input" accept=".json" class="hidden" type="file">
+                    <button id="upload-schedule" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-blue-500 text-white border-transparent hover:bg-blue-600 active:bg-blue-700 focus:ring-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                        </svg>
+                        <span>رفع الجدول</span>
+                    </button>
                 </div>
-                <p class="text-xs mt-2" style="color: var(--text-secondary);">
-                    💡 قم بتحميل الجدول بصيغة (Html) لحفظ جميع الدروس وتقدمك. يمكنك تحميل الملف المحفوظ لاستعادة بياناتك في أي وقت.
+                <p class="text-xs mt-3 text-gray-500 dark:text-gray-400/80">
+                    💡 تذكر دائماً: يجب عليك عند كل تعديل او إضافة أو حذف في تقويم جدولك الخاص أن تتأكد من تحميل نسخة احتياطية بصيغة JSON لحفظ جميع الدروس وتقدمك واستعادتها في أي وقت عند العودة. خصوصيتك محفوظة، بياناتك لا تغادر جهازك.
                 </p>
             </div>
         </div>
 
-        <div id="calendar-container">
-            <!-- Calendar renders here -->
-        </div>
+        <!-- Calendar Container -->
+        <div id="calendar-container"></div>
     </div>
 
-    <!-- Task Details Modal -->
-    <div id="task-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">تفاصيل الدرس</h2>
-                <button class="modal-close" id="modal-close">×</button>
-            </div>
-            <div class="modal-body" id="modal-body">
-                <!-- Details populated by JavaScript -->
+    <!-- Task Modal -->
+    <div id="task-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-theme-dark-card rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b dark:border-theme-border">
+                    <h2 class="text-2xl font-bold dark:text-theme-text">تفاصيل الدرس</h2>
+                    <button id="close-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-3xl leading-none">×</button>
+                </div>
+                <div id="modal-content" class="space-y-3"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Constants and Variables
-        const INITIAL_LESSONS = 0;
-        const REST_DAYS = 2;
-        const LESSON_INTERVAL = REST_DAYS + 1;
+        // Constants
         const REVIEW_INTERVALS = [1, 3, 8, 18, 48, 139];
+        let lessons = [];
+        let completedTasks = new Set();
+        let deferredPrompt;
 
-        let INITIAL_LESSON_COUNT = INITIAL_LESSONS;
-        
-        let CUSTOM_LESSONS = []; 
-        const schedule = new Map(); 
-        let maxDate = null;
-        let minDate = null;
-        
-        let messageBox;
-        let currentTheme = 'light';
-        let completedTasks = new Set(); // Track completed tasks
-
-        // Theme Toggle
+        // Theme Management
         function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            currentTheme = savedTheme;
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.classList.toggle('dark', theme === 'dark');
             updateThemeButton();
         }
 
         function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            localStorage.setItem('theme', currentTheme);
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
             updateThemeButton();
         }
 
         function updateThemeButton() {
-            const themeToggle = document.getElementById('theme-toggle');
-            const icon = themeToggle.querySelector('.theme-icon');
-            const text = themeToggle.querySelector('.theme-text');
-            
-            if (currentTheme === 'dark') {
-                icon.textContent = '☀️';
-                text.textContent = 'الوضع النهاري';
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+            document.getElementById('theme-text').textContent = isDark ? 'الوضع النهاري' : 'الوضع الليلي';
+        }
+
+        // PWA Install
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        document.getElementById('install-btn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
             } else {
-                icon.textContent = '🌙';
-                text.textContent = 'الوضع الليلي';
+                showMessage('التطبيق مثبت بالفعل أو غير متاح للتثبيت', 'info');
             }
+        });
+
+        // Utility Functions
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
         }
 
-        // Show Message Function
-        function showMessage(text, isError = false) {
-            if (!messageBox) return;
-            messageBox.textContent = text;
-            messageBox.classList.remove('hidden', 'msg-error', 'msg-success');
-            
-            if (isError) {
-                messageBox.classList.add('msg-error');
-            } else {
-                messageBox.classList.add('msg-success');
-            }
-            
-            setTimeout(() => {
-                messageBox.classList.add('hidden');
-            }, 5000);
-        }
-
-        // Toggle task completion
-        function toggleTaskCompletion(taskKey, element) {
-            const checkbox = element.querySelector('input[type="checkbox"]');
-            
-            if (completedTasks.has(taskKey)) {
-                completedTasks.delete(taskKey);
-                checkbox.checked = false;
-            } else {
-                completedTasks.add(taskKey);
-                checkbox.checked = true;
-            }
-            
-            saveCompletedTasks();
-            updateStatistics();
-            renderCalendar();
-        }
-
-        // Save completed tasks to localStorage
-        function saveCompletedTasks() {
-            try {
-                localStorage.setItem('completedTasks', JSON.stringify([...completedTasks]));
-            } catch (e) {
-                console.error('Error saving completed tasks:', e);
-            }
-        }
-
-        // Load completed tasks from localStorage
-        function loadCompletedTasks() {
-            try {
-                const saved = localStorage.getItem('completedTasks');
-                if (saved) {
-                    completedTasks = new Set(JSON.parse(saved));
-                }
-            } catch (e) {
-                console.error('Error loading completed tasks:', e);
-                completedTasks = new Set();
-            }
-        }
-
-        // Update statistics
-        function updateStatistics() {
-            let totalTasks = 0;
-            let completedCount = 0;
-            
-            // Count all tasks (lessons + reviews) regardless of date
-            schedule.forEach((tasks, dateStr) => {
-                tasks.forEach(task => {
-                    totalTasks++;
-                    const taskKey = getTaskKey(dateStr, task.name, task.type === 'review' ? task.review : 0);
-                    if (completedTasks.has(taskKey)) {
-                        completedCount++;
-                    }
-                });
-            });
-            
-            const pendingCount = totalTasks - completedCount;
-            const completionPercentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
-            
-            document.getElementById('total-tasks-stat').textContent = totalTasks;
-            document.getElementById('completed-tasks-stat').textContent = completedCount;
-            document.getElementById('pending-tasks-stat').textContent = pendingCount;
-            document.getElementById('completion-percentage-stat').textContent = completionPercentage + '%';
-            
-            const progressBar = document.getElementById('progress-bar');
-            const progressText = document.getElementById('progress-text');
-            progressBar.style.width = completionPercentage + '%';
-            progressText.textContent = completionPercentage + '%';
-        }
-
-        // Modal Functions
-        function showTaskDetails(taskData) {
-            const modal = document.getElementById('task-modal');
-            const modalBody = document.getElementById('modal-body');
-            
-            let badgeClass = 'badge-new';
-            let badgeText = 'درس جديد';
-            
-            if (taskData.type === 'review') {
-                badgeClass = 'badge-review';
-                badgeText = `مراجعة رقم ${taskData.review}`;
-            } else if (taskData.isFirstLesson) {
-                badgeClass = 'badge-first';
-                badgeText = 'درسك الأول! 🎉';
-            }
-            
-            const gregorianDate = formatDateArabic(taskData.dateStr);
-            const hijriDate = formatDateHijri(taskData.dateStr);
-            const randomQuote = getRandomQuote();
-            
-            const taskKey = getTaskKey(taskData.dateStr, taskData.name, taskData.review);
-            const isCompleted = completedTasks.has(taskKey);
-            
-            let detailsHTML = `
-                <div class="detail-row">
-                    <div class="detail-label">📚 اسم الدرس:</div>
-                    <div class="detail-value"><strong>${taskData.name}</strong></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">📅 التاريخ الميلادي:</div>
-                    <div class="detail-value">${gregorianDate}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">🌙 التاريخ الهجري:</div>
-                    <div class="detail-value">${hijriDate}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">📌 النوع:</div>
-                    <div class="detail-value">
-                        <span class="lesson-badge ${badgeClass}">${badgeText}</span>
-                    </div>
-                </div>
-            `;
-            
-            if (taskData.type === 'review') {
-                const originalGregorian = formatDateArabic(taskData.originalDateStr);
-                const originalHijri = formatDateHijri(taskData.originalDateStr);
-                
-                detailsHTML += `
-                    <div class="detail-row">
-                        <div class="detail-label">🔄 رقم المراجعة:</div>
-                        <div class="detail-value">${taskData.review} من 6</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">⏱️ الفاصل الزمني:</div>
-                        <div class="detail-value">${taskData.intervalDays} يوم من تاريخ الدراسة الأصلي</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">📖 الدرس الأصلي (ميلادي):</div>
-                        <div class="detail-value">${originalGregorian}</div>
-                    </div>
-                    <div class="detail-row">
-                        <div class="detail-label">📖 الدرس الأصلي (هجري):</div>
-                        <div class="detail-value">${originalHijri}</div>
-                    </div>
-                `;
-            } else {
-                detailsHTML += `
-                    <div class="detail-row">
-                        <div class="detail-label">✨ الهدف:</div>
-                        <div class="detail-value">التركيز على فهم وحفظ محتوى الدرس للمرة الأولى</div>
-                    </div>
-                `;
-            }
-            
-            detailsHTML += `
-                <div class="detail-row">
-                    <div class="detail-label">💡 نصيحة اليوم:</div>
-                    <div class="detail-value"><strong>${randomQuote}</strong></div>
-                </div>
-                <div class="completion-section">
-                    <div class="completion-checkbox" onclick="toggleTaskCompletion('${taskKey}', this)">
-                        <input type="checkbox" id="task-completion-checkbox" ${isCompleted ? 'checked' : ''}>
-                        <label for="task-completion-checkbox">تم إنجاز هذه المهمة ✓</label>
-                    </div>
-                </div>
-            `;
-            
-            modalBody.innerHTML = detailsHTML;
-            modal.classList.add('active');
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('task-modal');
-            modal.classList.remove('active');
-        }
-
-        // Create unique task key
-        function getTaskKey(dateStr, name, reviewNum = 0) {
-            return `${dateStr}|${name}|${reviewNum}`;
-        }
-        
-        // Add days to date
         function addDays(date, days) {
             const result = new Date(date);
             result.setDate(result.getDate() + days);
             return result;
         }
 
-        // Format date to YYYY-MM-DD
-        function formatDate(date) {
-            const year = date.getUTCFullYear();
-            const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-            const day = date.getUTCDate().toString().padStart(2, '0');
-            return `${year}-${month}-${day}`;
+        function getTaskKey(date, name, reviewNum) {
+            return `${date}|${name}|${reviewNum}`;
         }
 
-        // Motivational quotes array
-        const MOTIVATIONAL_QUOTES = [
-            'من جدّ وجد، ومن سار على الدرب وصل 🌟',
-            'العلم يرفع بيوتاً لا عماد لها، والجهل يهدم بيوت العز والكرم 📚',
-            'النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪',
-            'من صبر ظفر، ومن ثابر أدرك 🎯',
-            'قطرة الماء تثقب الصخر، لا بالعنف ولكن بالتكرار 💧',
-            'كل يوم تراجع فيه دروسك هو استثمار في مستقبلك 🌱',
-            'المثابرة والإصرار مفتاح كل نجاح 🔑',
-            'الطريق إلى القمة ليس بالسهل، لكنه يستحق العناء 🏔️',
-            'العبقرية هي 1% إلهام و99% اجتهاد - توماس إديسون ⚡',
-            'اليوم صعب، غداً أصعب، لكن بعد غد ستشرق الشمس 🌅',
-            'لا تؤجل عمل اليوم إلى الغد، فالنجاح يكمن في الاستمرارية ⏰',
-            'من يصعد السلم درجة درجة يصل إلى القمة 🪜',
-            'التكرار يعلم الشطار، والمراجعة تثبت المعرفة 🔄',
-            'كل مراجعة تقربك خطوة من إتقان العلم 📖',
-            'الفشل ليس سقوطاً، بل هو عدم النهوض بعد السقوط 🦅'
-        ];
-
-        // Get random motivational quote
-        function getRandomQuote() {
-            return MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
+        function showMessage(text, type = 'success') {
+            const messageBox = document.getElementById('message-box');
+            messageBox.textContent = text;
+            messageBox.className = `p-4 rounded-lg mb-5 text-center font-semibold ${
+                type === 'error' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200' :
+                type === 'info' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200' :
+                'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+            }`;
+            messageBox.classList.remove('hidden');
+            setTimeout(() => messageBox.classList.add('hidden'), 5000);
         }
 
-        // Format date to Arabic (Gregorian)
-        function formatDateArabic(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00Z');
-            return date.toLocaleDateString('ar-SA', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                timeZone: 'UTC',
-                calendar: 'gregory'
-            });
-        }
-
-        // Format date to Hijri
-        function formatDateHijri(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00Z');
-            return date.toLocaleDateString('ar-SA', { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                timeZone: 'UTC',
-                calendar: 'islamic-umalqura'
-            });
-        }
-
-        // Generate tasks for lesson
-        function generateTasks(lessonNum, lessonDate, lessonName = null) {
-            const lessonDateStr = formatDate(lessonDate);
-            const isFirst = lessonNum === 1 && CUSTOM_LESSONS.length === 1 && !!lessonName; 
-
-            if (!schedule.has(lessonDateStr)) {
-                schedule.set(lessonDateStr, []);
-            }
-            
-            schedule.get(lessonDateStr).push({
-                type: 'new',
-                lesson: lessonNum,
-                name: lessonName || `Lesson ${lessonNum}`,
-                isFirstLesson: isFirst
-            });
-            
-            if (!maxDate || lessonDate.getTime() > maxDate.getTime()) {
-                maxDate = new Date(lessonDate);
-            }
-
-            REVIEW_INTERVALS.forEach((interval, rIndex) => {
-                const reviewDate = addDays(lessonDate, interval);
-                const reviewDateStr = formatDate(reviewDate);
-                const reviewNum = rIndex + 1;
-
-                if (!schedule.has(reviewDateStr)) {
-                    schedule.set(reviewDateStr, []);
-                }
-                
-                schedule.get(reviewDateStr).push({
-                    type: 'review',
-                    lesson: lessonNum,
-                    review: reviewNum,
-                    name: lessonName || `Lesson ${lessonNum}`,
-                    originalDateStr: lessonDateStr,
-                    intervalDays: interval,
-                    isFirstLesson: false
+        // Statistics
+        function updateStatistics() {
+            const allTasks = [];
+            lessons.forEach(lesson => {
+                const lessonDate = formatDate(new Date(lesson.date));
+                allTasks.push({ date: lessonDate, name: lesson.name, review: 0 });
+                REVIEW_INTERVALS.forEach((interval, idx) => {
+                    const reviewDate = formatDate(addDays(new Date(lesson.date), interval));
+                    allTasks.push({ date: reviewDate, name: lesson.name, review: idx + 1 });
                 });
-                
-                if (!maxDate || reviewDate.getTime() > maxDate.getTime()) {
-                    maxDate = new Date(reviewDate);
-                }
             });
+
+            const totalTasks = allTasks.length;
+            const completedCount = allTasks.filter(task => 
+                completedTasks.has(getTaskKey(task.date, task.name, task.review))
+            ).length;
+            const pendingCount = totalTasks - completedCount;
+            const percentage = totalTasks > 0 ? Math.round((completedCount / totalTasks) * 100) : 0;
+
+            document.getElementById('total-tasks').textContent = totalTasks;
+            document.getElementById('completed-tasks').textContent = completedCount;
+            document.getElementById('pending-tasks').textContent = pendingCount;
+            document.getElementById('completion-percentage').textContent = percentage + '%';
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('progress-text').textContent = percentage + '%';
         }
 
-        // Build complete schedule
-        function buildSchedule() {
-            schedule.clear();
-            maxDate = null;
-            minDate = null;
+        // Add Lesson
+        document.getElementById('add-lesson').addEventListener('click', () => {
+            const name = document.getElementById('lessonName').value.trim();
+            const date = document.getElementById('lessonDate').value;
 
-            CUSTOM_LESSONS.sort((a, b) => a.date.getTime() - b.date.getTime()).forEach(custom => {
-                generateTasks(custom.lesson, custom.date, custom.name);
-                
-                if (!minDate || custom.date.getTime() < minDate.getTime()) {
-                    minDate = custom.date;
-                }
-            });
-            
-            const currentTotalLessons = INITIAL_LESSONS + CUSTOM_LESSONS.length;
-            document.getElementById('lesson-count-display').textContent = currentTotalLessons;
+            if (!name || !date) {
+                showMessage('الرجاء إدخال اسم الدرس والتاريخ', 'error');
+                return;
+            }
 
-            updateStatistics();
+            if (lessons.some(l => l.name.toLowerCase() === name.toLowerCase())) {
+                showMessage('الدرس موجود بالفعل', 'error');
+                return;
+            }
+
+            lessons.push({ name, date });
+            lessons.sort((a, b) => new Date(a.date) - new Date(b.date));
+            saveData();
             renderCalendar();
-        }
+            updateStatistics();
+            document.getElementById('lessonName').value = '';
+            document.getElementById('lessonDate').value = '';
+            showMessage(`تمت إضافة "${name}" بنجاح!`);
+        });
 
-        // Add new custom lesson
-        function addNewCustomLesson() {
-            const dateInput = document.getElementById('new-lesson-date');
-            const nameInput = document.getElementById('new-lesson-name');
-            const dateStr = dateInput.value;
-            const lessonName = nameInput.value.trim();
-
-            if (!dateStr || !lessonName) {
-                showMessage('الرجاء اختيار تاريخ صالح و إدخال اسم للدرس.', true);
-                return;
-            }
-            
-            if (CUSTOM_LESSONS.some(l => l.name.toLowerCase() === lessonName.toLowerCase())) {
-                showMessage(`الدرس باسم "${lessonName}" موجود بالفعل.`, true);
+        // Delete Lesson
+        document.getElementById('delete-lesson').addEventListener('click', () => {
+            const name = document.getElementById('delete-lesson-name').value.trim();
+            if (!name) {
+                showMessage('الرجاء إدخال اسم الدرس', 'error');
                 return;
             }
 
-            const newDate = new Date(dateStr + 'T00:00:00Z');
+            const initialLength = lessons.length;
+            lessons = lessons.filter(l => l.name.toLowerCase() !== name.toLowerCase());
 
-            if (isNaN(newDate.getTime())) {
-                showMessage('تم إدخال تاريخ غير صالح.', true);
+            if (lessons.length === initialLength) {
+                showMessage(`لم يتم العثور على "${name}"`, 'error');
                 return;
             }
-            
-            const today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
-            
-            if (newDate.getTime() < today.getTime()) {
-                const confirmPast = confirm('التاريخ المحدد في الماضي. هل تريد المتابعة؟');
-                if (!confirmPast) {
-                    return;
-                }
-            }
-            
-            const nextLessonNum = INITIAL_LESSONS + CUSTOM_LESSONS.length + 1;
 
-            const newLesson = {
-                name: lessonName,
-                dateStr: dateStr, 
-                date: newDate, 
-                lesson: nextLessonNum 
-            };
+            saveData();
+            renderCalendar();
+            updateStatistics();
+            document.getElementById('delete-lesson-name').value = '';
+            showMessage(`تم حذف "${name}" بنجاح!`);
+        });
 
-            CUSTOM_LESSONS.push(newLesson);
-            buildSchedule();
-            showMessage(`تمت إضافة "${lessonName}" في تاريخ ${dateStr}!`);
-            dateInput.value = '';
-            nameInput.value = '';
-        }
-        
-        // Delete lesson by name
-        function deleteLessonByName() {
-            const nameInput = document.getElementById('delete-lesson-name');
-            const lessonName = nameInput.value.trim();
-
-            if (!lessonName) {
-                showMessage('الرجاء إدخال اسم الدرس الذي تريد حذفه.', true);
-                return;
-            }
-            
-            const initialLength = CUSTOM_LESSONS.length;
-            
-            CUSTOM_LESSONS = CUSTOM_LESSONS.filter(l => l.name.toLowerCase() !== lessonName.toLowerCase());
-
-            if (CUSTOM_LESSONS.length === initialLength) {
-                showMessage(`لم يتم العثور على الدرس باسم "${lessonName}".`, true);
-                return;
-            }
-            
-            let nextLessonNum = INITIAL_LESSONS + 1;
-            CUSTOM_LESSONS.forEach(l => l.lesson = nextLessonNum++);
-
-            buildSchedule();
-            showMessage(`تم حذف "${lessonName}" بنجاح!`);
-            nameInput.value = '';
-        }
-        
-        // Handle task click - show details
-        function handleTaskClick(event) {
-            const taskEl = event.currentTarget;
-            const { date, name, type, review, originaldate, interval, isfirst } = taskEl.dataset;
-            
-            const taskData = {
-                name: name,
-                dateStr: date,
-                type: type,
-                review: parseInt(review, 10) || 0,
-                intervalDays: parseInt(interval, 10) || 0,
-                originalDateStr: originaldate || '',
-                isFirstLesson: isfirst === 'true'
-            };
-            
-            showTaskDetails(taskData);
-        }
-
-        // Download schedule
-        function downloadSchedule() {
+        // Download
+        document.getElementById('download-schedule').addEventListener('click', () => {
             const data = {
-                customLessons: CUSTOM_LESSONS.map(l => ({
-                    name: l.name,
-                    dateStr: l.dateStr,
-                    lesson: l.lesson
-                })),
-                theme: currentTheme,
-                completedTasks: [...completedTasks]
+                lessons,
+                completedTasks: [...completedTasks],
+                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
             };
 
-            const htmlContent = document.documentElement.outerHTML;
-            const dataScript = `
-                <script id="saved-data">
-                window.SAVED_DATA = ${JSON.stringify(data)};
-                <\/script>
-            `;
-            
-            const modifiedHtml = htmlContent.replace('</head>', dataScript + '</head>');
-            
-            const blob = new Blob([modifiedHtml], { type: 'text/html' });
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             
-            // Create filename with date and time
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            
-            a.download = `jadwal_moddakr-${year}-${month}-${day}_${hours}-${minutes}.html`;
+            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}-${String(now.getMinutes()).padStart(2,'0')}`;
+            a.download = `jadwal_moddakr-${timestamp}.json`;
             a.click();
             URL.revokeObjectURL(url);
-            
-            showMessage('تم تنزيل الجدول بنجاح! 📥');
-        }
+            showMessage('تم تحميل الجدول بنجاح!');
+        });
 
-        // Upload schedule
-        function uploadSchedule() {
+        // Upload
+        document.getElementById('upload-schedule').addEventListener('click', () => {
             document.getElementById('upload-input').click();
-        }
+        });
 
-        // Handle file upload
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
+        document.getElementById('upload-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = (event) => {
                 try {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(e.target.result, 'text/html');
-                    const scriptEl = doc.getElementById('saved-data');
-                    
-                    if (scriptEl && scriptEl.textContent.includes('window.SAVED_DATA')) {
-                        const match = scriptEl.textContent.match(/window\.SAVED_DATA = ({.*?});/s);
-                        if (match) {
-                            const data = JSON.parse(match[1]);
-                            
-                            CUSTOM_LESSONS = data.customLessons.map(l => ({
-                                ...l,
-                                date: new Date(l.dateStr + 'T00:00:00Z')
-                            }));
-                            
-                            if (data.theme) {
-                                currentTheme = data.theme;
-                                document.documentElement.setAttribute('data-theme', currentTheme);
-                                localStorage.setItem('theme', currentTheme);
-                                updateThemeButton();
-                            }
-                            
-                            if (data.completedTasks) {
-                                completedTasks = new Set(data.completedTasks);
-                                saveCompletedTasks();
-                            }
-                            
-                            buildSchedule();
-                            showMessage('تم تحميل الجدول بنجاح!');
-                        } else {
-                            showMessage('لم يتم العثور على بيانات جدول صالحة في الملف.', true);
-                        }
-                    } else {
-                        showMessage('هذا الملف لا يحتوي على بيانات جدول محفوظة.', true);
+                    const data = JSON.parse(event.target.result);
+                    lessons = data.lessons || [];
+                    completedTasks = new Set(data.completedTasks || []);
+                    if (data.theme) {
+                        document.documentElement.classList.toggle('dark', data.theme === 'dark');
+                        localStorage.setItem('theme', data.theme);
+                        updateThemeButton();
                     }
+                    saveData();
+                    renderCalendar();
+                    updateStatistics();
+                    showMessage('تم تحميل الجدول بنجاح!');
                 } catch (error) {
-                    showMessage('خطأ في تحميل الملف: ' + error.message, true);
+                    showMessage('خطأ في قراءة الملف', 'error');
                 }
             };
             reader.readAsText(file);
-            event.target.value = '';
+            e.target.value = '';
+        });
+
+        // Save/Load Data
+        function saveData() {
+            localStorage.setItem('lessons', JSON.stringify(lessons));
+            localStorage.setItem('completedTasks', JSON.stringify([...completedTasks]));
         }
 
-        // Render calendar
+        function loadData() {
+            const savedLessons = localStorage.getItem('lessons');
+            const savedCompleted = localStorage.getItem('completedTasks');
+            if (savedLessons) lessons = JSON.parse(savedLessons);
+            if (savedCompleted) completedTasks = new Set(JSON.parse(savedCompleted));
+        }
+
+        // Render Calendar
         function renderCalendar() {
             const container = document.getElementById('calendar-container');
-            container.innerHTML = ''; 
-            
-            if (CUSTOM_LESSONS.length === 0) {
-                const emptyState = document.createElement('div');
-                emptyState.style.textAlign = 'center';
-                emptyState.style.padding = '3rem';
-                emptyState.style.color = 'var(--text-secondary)';
-                emptyState.innerHTML = '<h2 style="font-size: 1.5rem; margin-bottom: 1rem;">📚 لا توجد دروس بعد</h2><p>قم بإضافة درسك الأول لبدء رحلة التعلم!</p>';
-                container.appendChild(emptyState);
+            document.getElementById('lesson-count').textContent = lessons.length;
+
+            if (lessons.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-12 bg-white dark:bg-theme-dark-card/80 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold text-gray-700 dark:text-theme-text mb-2">📚 لا توجد دروس بعد</h2>
+                        <p class="text-gray-500 dark:text-gray-400">قم بإضافة درسك الأول لبدء رحلة التعلم!</p>
+                    </div>
+                `;
                 return;
             }
-            
-            const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 
-            const today = new Date();
-            today.setUTCHours(0, 0, 0, 0);
-            
-            const startDate = minDate && minDate.getTime() < today.getTime() ? minDate : today;
-            
-            let currentMonth = startDate.getUTCMonth();
-            let currentYear = startDate.getUTCFullYear();
-
-            let loopLimit = 0;
-
-            while (currentYear < maxDate.getUTCFullYear() || (currentYear === maxDate.getUTCFullYear() && currentMonth <= maxDate.getUTCMonth())) {
-                if (loopLimit > 50) break;
-                
-                const monthName = new Date(Date.UTC(currentYear, currentMonth, 1)).toLocaleString('ar', { month: 'long', year: 'numeric', timeZone: 'UTC' });
-
-                const monthGrid = document.createElement('div');
-                monthGrid.className = 'month-grid';
-
-                const monthHeader = document.createElement('div');
-                monthHeader.className = 'month-header';
-                monthHeader.textContent = monthName;
-                monthGrid.appendChild(monthHeader);
-
-                const weekHeader = document.createElement('div');
-                weekHeader.className = 'week-header grid grid-cols-7 font-semibold';
-                dayNames.forEach(name => {
-                    const dayNameCell = document.createElement('div');
-                    dayNameCell.className = 'day-name';
-                    dayNameCell.textContent = name;
-                    weekHeader.appendChild(dayNameCell);
+            const schedule = new Map();
+            lessons.forEach((lesson, idx) => {
+                const lessonDate = formatDate(new Date(lesson.date));
+                if (!schedule.has(lessonDate)) schedule.set(lessonDate, []);
+                schedule.get(lessonDate).push({
+                    name: lesson.name,
+                    type: 'new',
+                    isFirst: idx === 0,
+                    review: 0,
+                    originalDate: lessonDate
                 });
-                monthGrid.appendChild(weekHeader);
 
-                const daysGrid = document.createElement('div');
-                daysGrid.className = 'grid grid-cols-7';
+                REVIEW_INTERVALS.forEach((interval, rIdx) => {
+                    const reviewDate = formatDate(addDays(new Date(lesson.date), interval));
+                    if (!schedule.has(reviewDate)) schedule.set(reviewDate, []);
+                    schedule.get(reviewDate).push({
+                        name: lesson.name,
+                        type: 'review',
+                        review: rIdx + 1,
+                        interval,
+                        originalDate: lessonDate
+                    });
+                });
+            });
 
-                const firstDayOfMonth = new Date(Date.UTC(currentYear, currentMonth, 1)).getUTCDay(); 
-                const daysInMonth = new Date(Date.UTC(currentYear, currentMonth + 1, 0)).getUTCDate();
+            const dates = [...schedule.keys()].sort();
+            if (dates.length === 0) return;
 
-                for (let i = 0; i < firstDayOfMonth; i++) {
-                    const emptyCell = document.createElement('div');
-                    emptyCell.className = 'day-cell';
-                    emptyCell.style.opacity = '0.3';
-                    daysGrid.appendChild(emptyCell);
-                }
-
-                for (let day = 1; day <= daysInMonth; day++) {
-                    const dayCell = document.createElement('div');
-                    dayCell.className = 'day-cell';
-
-                    const dayNumber = document.createElement('div');
-                    dayNumber.className = 'day-number';
-                    dayNumber.textContent = day;
-                    dayCell.appendChild(dayNumber);
-
-                    const tasksContainer = document.createElement('div');
-                    tasksContainer.className = 'tasks';
-
-                    const currentDate = new Date(Date.UTC(currentYear, currentMonth, day));
-                    const currentDateStr = formatDate(currentDate);
-
-                    if (schedule.has(currentDateStr)) {
-                        const tasks = schedule.get(currentDateStr);
-                        tasks.sort((a, b) => {
-                            if (a.type === 'new' && b.type === 'review') return -1;
-                            if (a.type === 'review' && b.type === 'new') return 1;
-                            if (a.type === 'review' && b.type === 'review') return a.review - b.review;
-                            return 0;
-                        });
-
-                        tasks.forEach(task => {
-                            const taskName = task.name; 
-                            const reviewNum = task.type === 'review' ? task.review : 0;
-                            const taskKey = getTaskKey(currentDateStr, taskName, reviewNum);
-                            const isCompleted = completedTasks.has(taskKey);
-                            
-                            const taskEl = document.createElement('div');
-                            taskEl.classList.add('task');
-                            
-                            if (isCompleted) {
-                                taskEl.classList.add('completed');
-                            }
-                            
-                            taskEl.dataset.date = currentDateStr;
-                            taskEl.dataset.name = taskName;
-                            taskEl.dataset.type = task.type;
-                            taskEl.dataset.review = reviewNum;
-                            taskEl.dataset.originaldate = task.originalDateStr || '';
-                            taskEl.dataset.interval = task.intervalDays || 0;
-                            taskEl.dataset.isfirst = task.isFirstLesson || false;
-                            
-                            taskEl.addEventListener('click', handleTaskClick);
-
-                            let identifier;
-
-                            if (task.type === 'new') {
-                                taskEl.classList.add('new-lesson');
-                                
-                                if (task.isFirstLesson) {
-                                    identifier = "⭐ درسك الأول!";
-                                    taskEl.classList.add('first-lesson');
-                                } else {
-                                    identifier = `⭐ ${taskName}`;
-                                }
-                                taskEl.innerHTML = identifier;
-                                taskEl.title = `انقر لعرض تفاصيل الدرس`;
-                                
-                            } else {
-                                taskEl.classList.add('review-task');
-                                taskEl.innerHTML = `🔄 ${taskName} (مراجعة ${task.review})`;
-                                taskEl.title = `انقر لعرض تفاصيل المراجعة`;
-                            }
-                            
-                            tasksContainer.appendChild(taskEl);
-                        });
-                    } else {
-                        const today = new Date();
-                        today.setUTCHours(0, 0, 0, 0);
-                        
-                        if (minDate && currentDate.getTime() >= today.getTime() && currentDate.getTime() >= minDate.getTime()) {
-                            const dayOffset = (currentDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 * 24);
-                            if (dayOffset >= 0 && (dayOffset % LESSON_INTERVAL) > 0) {
-                                const restEl = document.createElement('div');
-                                restEl.className = 'rest-day';
-                                restEl.textContent = '';
-                                tasksContainer.appendChild(restEl);
-                            }
-                        }
-                    }
-                    
-                    dayCell.appendChild(tasksContainer);
-                    daysGrid.appendChild(dayCell);
-                }
-
-                monthGrid.appendChild(daysGrid);
-                container.appendChild(monthGrid);
-                
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                loopLimit++;
-            }
-        }
-        
-        // Load saved data on page load
-        function loadSavedData() {
-            if (window.SAVED_DATA) {
-                CUSTOM_LESSONS = window.SAVED_DATA.customLessons.map(l => ({
-                    ...l,
-                    date: new Date(l.dateStr + 'T00:00:00Z')
-                }));
-                
-                if (window.SAVED_DATA.theme) {
-                    currentTheme = window.SAVED_DATA.theme;
-                    document.documentElement.setAttribute('data-theme', currentTheme);
-                    localStorage.setItem('theme', currentTheme);
-                }
-                
-                if (window.SAVED_DATA.completedTasks) {
-                    completedTasks = new Set(window.SAVED_DATA.completedTasks);
-                    saveCompletedTasks();
-                }
-            }
-        }
-
-        // Setup app and initialize
-        function setupApp() {
-            messageBox = document.getElementById('message-box'); 
-
-            initTheme();
-            loadCompletedTasks();
-            loadSavedData();
-            buildSchedule();
-
-            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-            document.getElementById('add-lesson-btn').addEventListener('click', addNewCustomLesson);
-            document.getElementById('delete-lesson-btn').addEventListener('click', deleteLessonByName);
-            document.getElementById('download-btn').addEventListener('click', downloadSchedule);
-            document.getElementById('upload-btn').addEventListener('click', uploadSchedule);
-            document.getElementById('upload-input').addEventListener('change', handleFileUpload);
-            document.getElementById('modal-close').addEventListener('click', closeModal);
+            const startDate = new Date(dates[0]);
+            const endDate = new Date(dates[dates.length - 1]);
             
-            // Close modal when clicking outside
-            document.getElementById('task-modal').addEventListener('click', function(e) {
-                if (e.target.id === 'task-modal') {
-                    closeModal();
-                }
+            let currentDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+            const endMonth = new Date(endDate.getFullYear(), endDate.getMonth() + 1, 0);
+
+            let html = '';
+            while (currentDate <= endMonth) {
+                html += renderMonth(currentDate, schedule);
+                currentDate.setMonth(currentDate.getMonth() + 1);
+            }
+
+            container.innerHTML = html;
+
+            // Attach event listeners
+            document.querySelectorAll('.task-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    const data = JSON.parse(el.dataset.task);
+                    showTaskModal(data);
+                });
             });
         }
 
-        setupApp();
+        function renderMonth(date, schedule) {
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            const monthName = date.toLocaleDateString('ar', { month: 'long', year: 'numeric' });
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+            let html = `
+                <div class="bg-white dark:bg-theme-dark-card/80 rounded-xl shadow-xl mb-6 overflow-hidden">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-theme-dark-card dark:to-theme-dark-bg text-white p-4 text-center">
+                        <h3 class="text-2xl font-bold">${monthName}</h3>
+                    </div>
+                    <div class="grid grid-cols-7 bg-gray-100 dark:bg-theme-dark-bg border-b-2 dark:border-theme-border">
+                        ${dayNames.map(day => `<div class="text-center p-2 text-xs font-semibold text-gray-600 dark:text-gray-400">${day}</div>`).join('')}
+                    </div>
+                    <div class="grid grid-cols-7">
+            `;
+
+            for (let i = 0; i < firstDay; i++) {
+                html += '<div class="border dark:border-theme-border/30 min-h-[120px] bg-gray-50 dark:bg-theme-dark-bg/50"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const currentDate = formatDate(new Date(year, month, day));
+                const tasks = schedule.get(currentDate) || [];
+                
+                html += `
+                    <div class="border dark:border-theme-border/30 min-h-[120px] p-2 bg-white dark:bg-theme-dark-card/50 hover:bg-gray-50 dark:hover:bg-theme-dark-card/70 transition-colors">
+                        <div class="font-bold text-sm mb-1 text-gray-700 dark:text-theme-text">${day}</div>
+                        <div class="space-y-1">
+                `;
+
+                tasks.sort((a, b) => {
+                    if (a.type === 'new' && b.type === 'review') return -1;
+                    if (a.type === 'review' && b.type === 'new') return 1;
+                    return a.review - b.review;
+                }).forEach(task => {
+                    const taskKey = getTaskKey(currentDate, task.name, task.review);
+                    const isCompleted = completedTasks.has(taskKey);
+                    const taskData = { ...task, date: currentDate };
+                    
+                    let className = 'task-item text-xs p-1.5 rounded cursor-pointer transition-all hover:scale-105 hover:shadow-lg ';
+                    let icon = '';
+                    
+                    if (task.type === 'new') {
+                        if (task.isFirst) {
+                            className += 'bg-blue-500 dark:bg-theme-accent dark:text-theme-dark-bg text-white font-bold';
+                            icon = '🎉';
+                        } else {
+                            className += 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border-2 border-green-500 dark:border-green-600';
+                            icon = '⭐';
+                        }
+                    } else {
+                        className += 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 border-2 border-yellow-500 dark:border-yellow-600';
+                        icon = '🔄';
+                    }
+                    
+                    if (isCompleted) {
+                        className += ' opacity-60 line-through';
+                    }
+                    
+                    html += `
+                        <div class="${className}" data-task='${JSON.stringify(taskData)}'>
+                            ${icon} ${task.name}${task.type === 'review' ? ` (${task.review})` : ''}
+                            ${isCompleted ? ' ✓' : ''}
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div></div>';
+            return html;
+        }
+
+        // Task Modal
+        function showTaskModal(task) {
+            const modal = document.getElementById('task-modal');
+            const content = document.getElementById('modal-content');
+            
+            const gregorianDate = new Date(task.date).toLocaleDateString('ar-SA', { 
+                year: 'numeric', month: 'long', day: 'numeric', calendar: 'gregory' 
+            });
+            const hijriDate = new Date(task.date).toLocaleDateString('ar-SA', { 
+                year: 'numeric', month: 'long', day: 'numeric', calendar: 'islamic-umalqura' 
+            });
+            
+            const taskKey = getTaskKey(task.date, task.name, task.review);
+            const isCompleted = completedTasks.has(taskKey);
+            
+            const quotes = [
+                'من جدّ وجد، ومن سار على الدرب وصل 🌟',
+                'العلم يرفع بيوتاً لا عماد لها 📚',
+                'النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪',
+                'من صبر ظفر، ومن ثابر أدرك 🎯',
+                'قطرة الماء تثقب الصخر، لا بالعنف ولكن بالتكرار 💧'
+            ];
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            
+            let badgeClass = 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300';
+            let badgeText = 'درس جديد';
+            
+            if (task.type === 'review') {
+                badgeClass = 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300';
+                badgeText = `مراجعة رقم ${task.review}`;
+            } else if (task.isFirst) {
+                badgeClass = 'bg-blue-500 text-white dark:bg-theme-accent dark:text-theme-dark-bg';
+                badgeText = 'درسك الأول! 🎉';
+            }
+            
+            let detailsHTML = `
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">📚</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">اسم الدرس:</p>
+                            <p class="font-bold text-lg dark:text-theme-text">${task.name}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">📅</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">التاريخ الميلادي:</p>
+                            <p class="font-semibold dark:text-theme-text">${gregorianDate}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">🌙</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">التاريخ الهجري:</p>
+                            <p class="font-semibold dark:text-theme-text">${hijriDate}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">📌</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">النوع:</p>
+                            <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold ${badgeClass}">${badgeText}</span>
+                        </div>
+                    </div>
+            `;
+            
+            if (task.type === 'review') {
+                const originalDate = new Date(task.originalDate).toLocaleDateString('ar-SA', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+                detailsHTML += `
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">🔄</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">رقم المراجعة:</p>
+                            <p class="font-semibold dark:text-theme-text">${task.review} من 6</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">⏱️</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">الفاصل الزمني:</p>
+                            <p class="font-semibold dark:text-theme-text">${task.interval} يوم من تاريخ الدراسة الأصلي</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">📖</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">الدرس الأصلي:</p>
+                            <p class="font-semibold dark:text-theme-text">${originalDate}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            detailsHTML += `
+                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                        <span class="text-2xl">💡</span>
+                        <div class="flex-1">
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">نصيحة اليوم:</p>
+                            <p class="font-semibold dark:text-theme-text">${randomQuote}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t-2 dark:border-theme-border">
+                        <label class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-black/20 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-black/30 transition-colors">
+                            <input type="checkbox" ${isCompleted ? 'checked' : ''} 
+                                   onchange="toggleTaskCompletion('${taskKey}')"
+                                   class="w-6 h-6 rounded border-gray-300 dark:border-theme-border text-emerald-600 dark:text-theme-accent focus:ring-2 focus:ring-emerald-500 dark:focus:ring-theme-accent cursor-pointer">
+                            <span class="text-lg font-semibold dark:text-theme-text">تم إنجاز هذه المهمة ✓</span>
+                        </label>
+                    </div>
+                </div>
+            `;
+            
+            content.innerHTML = detailsHTML;
+            modal.classList.remove('hidden');
+        }
+
+        function toggleTaskCompletion(taskKey) {
+            if (completedTasks.has(taskKey)) {
+                completedTasks.delete(taskKey);
+            } else {
+                completedTasks.add(taskKey);
+            }
+            saveData();
+            updateStatistics();
+            renderCalendar();
+        }
+
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('task-modal').classList.add('hidden');
+        });
+
+        document.getElementById('task-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'task-modal') {
+                document.getElementById('task-modal').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+        // Initialize
+        initTheme();
+        loadData();
+        renderCalendar();
+        updateStatistics();
+
+        // Set today's date as default
+        document.getElementById('lessonDate').valueAsDate = new Date();
     </script>
 </body>
 </html>
