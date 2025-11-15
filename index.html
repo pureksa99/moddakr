@@ -7,6 +7,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="مددكر">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="مددكر">
+    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💡</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💡</text></svg>">
     <title>Moddakr - مددكر</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -214,20 +218,117 @@
         }
 
         // PWA Install
+        let deferredPrompt;
+        let isInstallable = false;
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            isInstallable = true;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            showMessage('تم تثبيت التطبيق بنجاح! 🎉');
+            deferredPrompt = null;
         });
 
         document.getElementById('install-btn').addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
+            // Check if it's iOS
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+            
+            if (isIos && !isInStandaloneMode) {
+                // Show iOS instructions
+                showIOSInstructions();
+            } else if (deferredPrompt && isInstallable) {
+                // For Android and desktop
+                try {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        showMessage('جاري تثبيت التطبيق...');
+                    }
+                    deferredPrompt = null;
+                } catch (error) {
+                    console.error('Install error:', error);
+                    showIOSInstructions();
+                }
+            } else if (isInStandaloneMode) {
+                showMessage('التطبيق مثبت بالفعل! ✅', 'info');
             } else {
-                showMessage('التطبيق مثبت بالفعل أو غير متاح للتثبيت', 'info');
+                // Show manual instructions
+                showIOSInstructions();
             }
         });
+
+        function showIOSInstructions() {
+            const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const modal = document.getElementById('task-modal');
+            const content = document.getElementById('modal-content');
+            
+            let instructions = '';
+            if (isIos) {
+                instructions = `
+                    <div class="text-center space-y-4">
+                        <div class="text-6xl mb-4">📱</div>
+                        <h3 class="text-xl font-bold dark:text-theme-text mb-4">تثبيت التطبيق على iPhone/iPad</h3>
+                        <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">1️⃣</span>
+                                <p>اضغط على زر <strong>المشاركة</strong> 
+                                   <svg class="inline-block w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                       <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/>
+                                   </svg>
+                                   في أسفل الشاشة
+                                </p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">2️⃣</span>
+                                <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> 
+                                   <span class="inline-block">➕🏠</span>
+                                </p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">3️⃣</span>
+                                <p>اضغط <strong>"إضافة"</strong> في الأعلى</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
+                                <span class="text-2xl">✅</span>
+                                <p class="font-bold text-emerald-700 dark:text-emerald-300">ستجد أيقونة التطبيق 💡 على شاشتك الرئيسية!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                instructions = `
+                    <div class="text-center space-y-4">
+                        <div class="text-6xl mb-4">📱</div>
+                        <h3 class="text-xl font-bold dark:text-theme-text mb-4">تثبيت التطبيق</h3>
+                        <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">📲</span>
+                                <p><strong>على Chrome/Edge:</strong> اضغط على ⋮ (القائمة) ثم اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">🦊</span>
+                                <p><strong>على Firefox:</strong> اضغط على ⋮ ثم اختر "تثبيت"</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">🍎</span>
+                                <p><strong>على Safari:</strong> اضغط على زر المشاركة ثم "إضافة إلى الشاشة الرئيسية"</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
+                                <span class="text-2xl">✅</span>
+                                <p class="font-bold text-emerald-700 dark:text-emerald-300">يمكنك استخدام التطبيق بدون إنترنت بعد التثبيت!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            content.innerHTML = instructions;
+            modal.classList.remove('hidden');
+        }
 
         // Utility Functions
         function formatDate(date) {
@@ -700,6 +801,12 @@
 
         // Set today's date as default
         document.getElementById('lessonDate').valueAsDate = new Date();
+
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZSkgewogIGUud2FpdFVudGlsKAogICAgY2FjaGVzLm9wZW4oJ21vZGRha3ItdjEnKS50aGVuKGZ1bmN0aW9uKGNhY2hlKSB7CiAgICAgIHJldHVybiBjYWNoZS5hZGRBbGwoWycuLyddKTsKICAgIH0pCiAgKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZnVuY3Rpb24oZSkgewogIGUucmVzcG9uZFdpdGgoCiAgICBjYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKGZ1bmN0aW9uKHJlc3BvbnNlKSB7CiAgICAgIHJldHVybiByZXNwb25zZSB8fCBmZXRjaChlLnJlcXVlc3QpOwogICAgfSkKICApOwp9KTs=')
+                .catch(() => console.log('Service Worker registration skipped'));
+        }
     </script>
 </body>
 </html>
