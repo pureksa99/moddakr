@@ -6,8 +6,10 @@
     <meta name="theme-color" content="#081c15">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="مددكر">
-    <title>مددكر - Moddakr</title>
+    <meta name="apple-mobile-web-app-title" content="مُدَّكِر">
+    <meta name="description" content="تطبيق لمساعدة طالب العلم على الحفظ والاستذكار بنظام التكرار المتباعد">
+    <link rel="manifest" href="#" id="manifest-placeholder">
+    <title>مُدَّكِر - Moddakr</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -46,7 +48,7 @@
         <header class="py-5">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <h1 class="text-3xl font-bold text-gray-700 dark:text-theme-text">
-                    💡 (مددكر) لمساعدة طالب العلم على الحفظ والإستذكار
+                    💡 (مُدَّكِر) لمساعدة طالب العلم على الحفظ والإستذكار
                 </h1>
                 <div class="flex items-center gap-3">
                     <button id="install-btn" class="flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-white bg-emerald-500 hover:bg-emerald-600 dark:bg-theme-accent dark:text-theme-dark-bg dark:hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 shadow-lg animate-gentle-shake focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-400 dark:focus:ring-offset-theme-dark-bg">
@@ -187,7 +189,103 @@
     </div>
 
     <script>
-        console.log('التطبيق يعمل الآن...');
+        console.log('🚀 بدء تشغيل التطبيق...');
+        
+        // Register Service Worker and Create Manifest for PWA
+        if ('serviceWorker' in navigator) {
+            // Create Web App Manifest
+            const manifest = {
+                "name": "مُدَّكِر - Moddakr",
+                "short_name": "مُدَّكِر",
+                "description": "تطبيق لمساعدة طالب العلم على الحفظ والاستذكار بنظام التكرار المتباعد",
+                "start_url": "./",
+                "display": "standalone",
+                "background_color": "#081c15",
+                "theme_color": "#081c15",
+                "orientation": "portrait",
+                "dir": "rtl",
+                "lang": "ar",
+                "icons": [
+                    {
+                        "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23081c15'/%3E%3Ctext x='256' y='330' font-size='280' text-anchor='middle' fill='%2363f163'%3E💡%3C/text%3E%3C/svg%3E",
+                        "sizes": "512x512",
+                        "type": "image/svg+xml",
+                        "purpose": "any maskable"
+                    },
+                    {
+                        "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='20' fill='%23081c15'/%3E%3Ctext x='96' y='125' font-size='100' text-anchor='middle' fill='%2363f163'%3E💡%3C/text%3E%3C/svg%3E",
+                        "sizes": "192x192",
+                        "type": "image/svg+xml"
+                    }
+                ]
+            };
+            
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestURL = URL.createObjectURL(manifestBlob);
+            document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+            console.log('✅ Manifest تم إنشاؤه');
+
+            // Create Service Worker Code
+            const swCode = `
+                const CACHE_NAME = 'moddakr-cache-v1';
+                const urlsToCache = [
+                    './',
+                    './index.html'
+                ];
+                
+                self.addEventListener('install', event => {
+                    console.log('[SW] Installing...');
+                    event.waitUntil(
+                        caches.open(CACHE_NAME)
+                            .then(cache => {
+                                console.log('[SW] Caching files');
+                                return cache.addAll(urlsToCache);
+                            })
+                    );
+                    self.skipWaiting();
+                });
+                
+                self.addEventListener('activate', event => {
+                    console.log('[SW] Activating...');
+                    event.waitUntil(
+                        caches.keys().then(cacheNames => {
+                            return Promise.all(
+                                cacheNames.map(cacheName => {
+                                    if (cacheName !== CACHE_NAME) {
+                                        console.log('[SW] Deleting old cache:', cacheName);
+                                        return caches.delete(cacheName);
+                                    }
+                                })
+                            );
+                        })
+                    );
+                    return self.clients.claim();
+                });
+                
+                self.addEventListener('fetch', event => {
+                    event.respondWith(
+                        caches.match(event.request)
+                            .then(response => {
+                                if (response) {
+                                    return response;
+                                }
+                                return fetch(event.request);
+                            })
+                    );
+                });
+            `;
+
+            const swBlob = new Blob([swCode], { type: 'application/javascript' });
+            const swURL = URL.createObjectURL(swBlob);
+
+            navigator.serviceWorker.register(swURL)
+                .then(registration => {
+                    console.log('✅ Service Worker مسجل بنجاح:', registration.scope);
+                })
+                .catch(error => {
+                    console.error('❌ فشل تسجيل Service Worker:', error);
+                });
+        }
         
         // Constants
         const REVIEW_INTERVALS = [1, 3, 8, 18, 48, 139];
@@ -217,31 +315,64 @@
             document.getElementById('theme-text').textContent = isDark ? 'الوضع النهاري' : 'الوضع الليلي';
         }
 
-        // PWA Install
+        // PWA Install Functionality
         let deferredPrompt = null;
 
         window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('💫 حدث beforeinstallprompt تم تشغيله');
             e.preventDefault();
             deferredPrompt = e;
-            console.log('التطبيق جاهز للتثبيت');
+            document.getElementById('install-btn').style.display = 'flex';
+            console.log('✅ التطبيق جاهز للتثبيت');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('🎉 تم تثبيت التطبيق بنجاح!');
+            deferredPrompt = null;
+            showMessage('تم تثبيت التطبيق بنجاح! 🎉 يمكنك الآن استخدامه من الشاشة الرئيسية', 'success');
+            setTimeout(() => {
+                document.getElementById('install-btn').style.display = 'none';
+            }, 3000);
         });
 
         document.getElementById('install-btn').addEventListener('click', async () => {
             const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isInStandaloneMode = window.navigator.standalone;
+            const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            
+            console.log('🖱️ تم الضغط على زر التثبيت');
+            console.log('📱 iOS:', isIos);
+            console.log('🖥️ Standalone Mode:', isInStandaloneMode);
+            console.log('💾 Deferred Prompt:', !!deferredPrompt);
+            
+            if (isInStandaloneMode) {
+                showMessage('التطبيق مثبت بالفعل! ✅', 'info');
+                return;
+            }
             
             if (isIos && !isInStandaloneMode) {
                 showIOSInstructions();
-            } else if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    showMessage('جاري تثبيت التطبيق... 📱');
+                return;
+            }
+            
+            if (deferredPrompt) {
+                try {
+                    console.log('📲 عرض نافذة التثبيت...');
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log('👤 اختيار المستخدم:', outcome);
+                    
+                    if (outcome === 'accepted') {
+                        showMessage('جارٍ تثبيت التطبيق... 📱', 'success');
+                    } else {
+                        showMessage('تم إلغاء التثبيت', 'info');
+                    }
+                    deferredPrompt = null;
+                } catch (error) {
+                    console.error('❌ خطأ أثناء التثبيت:', error);
+                    showIOSInstructions();
                 }
-                deferredPrompt = null;
-            } else if (isInStandaloneMode) {
-                showMessage('التطبيق مثبت بالفعل! ✅', 'info');
             } else {
+                console.log('ℹ️ لا يوجد Deferred Prompt - عرض التعليمات');
                 showIOSInstructions();
             }
         });
@@ -260,7 +391,7 @@
                         <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                                 <span class="text-2xl">1️⃣</span>
-                                <p>اضغط على زر <strong>المشاركة</strong> في أسفل الشاشة</p>
+                                <p>اضغط على زر <strong>المشاركة</strong> (📤) في أسفل الشاشة</p>
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                                 <span class="text-2xl">2️⃣</span>
@@ -272,7 +403,7 @@
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
                                 <span class="text-2xl">✅</span>
-                                <p class="font-bold text-emerald-700 dark:text-emerald-300">ستجد أيقونة "مددكر" 💡 على شاشتك الرئيسية!</p>
+                                <p class="font-bold text-emerald-700 dark:text-emerald-300">ستجد أيقونة "مُدَّكِر" 💡 على شاشتك الرئيسية!</p>
                             </div>
                         </div>
                     </div>
@@ -284,12 +415,20 @@
                         <h3 class="text-xl font-bold dark:text-theme-text mb-4">تثبيت التطبيق</h3>
                         <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
-                                <span class="text-2xl">📲</span>
-                                <p><strong>على Chrome:</strong> اضغط على ⋮ ثم "تثبيت التطبيق"</p>
+                                <span class="text-2xl">🌐</span>
+                                <p><strong>على Chrome:</strong> اضغط على القائمة (⋮) ثم "تثبيت التطبيق"</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">🦊</span>
+                                <p><strong>على Firefox:</strong> اضغط على أيقونة المنزل (+) في شريط العنوان</p>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
+                                <span class="text-2xl">🎯</span>
+                                <p><strong>على Edge:</strong> اضغط على (⋯) ثم "التطبيقات" ثم "تثبيت هذا الموقع كتطبيق"</p>
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
                                 <span class="text-2xl">✅</span>
-                                <p class="font-bold text-emerald-700 dark:text-emerald-300">يمكنك استخدام "مددكر" بدون إنترنت!</p>
+                                <p class="font-bold text-emerald-700 dark:text-emerald-300">يمكنك استخدام "مُدَّكِر" بدون إنترنت!</p>
                             </div>
                         </div>
                     </div>
@@ -359,11 +498,11 @@
 
         // Add Lesson
         document.getElementById('add-lesson').addEventListener('click', () => {
-            console.log('زر الإضافة تم الضغط عليه');
+            console.log('➕ زر الإضافة تم الضغط عليه');
             const name = document.getElementById('lessonName').value.trim();
             const date = document.getElementById('lessonDate').value;
 
-            console.log('الاسم:', name, 'التاريخ:', date);
+            console.log('📝 الاسم:', name, '📅 التاريخ:', date);
 
             if (!name || !date) {
                 showMessage('الرجاء إدخال اسم الدرس والتاريخ', 'error');
@@ -377,7 +516,7 @@
 
             lessons.push({ name, date });
             lessons.sort((a, b) => new Date(a.date) - new Date(b.date));
-            console.log('الدروس الحالية:', lessons);
+            console.log('✅ الدروس الحالية:', lessons);
             
             saveData();
             renderCalendar();
@@ -474,9 +613,9 @@
             try {
                 localStorage.setItem('moddakr_lessons', JSON.stringify(lessons));
                 localStorage.setItem('moddakr_completedTasks', JSON.stringify([...completedTasks]));
-                console.log('تم حفظ البيانات بنجاح');
+                console.log('💾 تم حفظ البيانات بنجاح');
             } catch (e) {
-                console.error('خطأ في الحفظ:', e);
+                console.error('❌ خطأ في الحفظ:', e);
             }
         }
 
@@ -486,9 +625,9 @@
                 const savedCompleted = localStorage.getItem('moddakr_completedTasks');
                 if (savedLessons) lessons = JSON.parse(savedLessons);
                 if (savedCompleted) completedTasks = new Set(JSON.parse(savedCompleted));
-                console.log('تم تحميل البيانات:', lessons.length, 'دروس');
+                console.log('📂 تم تحميل البيانات:', lessons.length, 'دروس');
             } catch (e) {
-                console.error('خطأ في التحميل:', e);
+                console.error('❌ خطأ في التحميل:', e);
             }
         }
 
@@ -547,7 +686,6 @@
 
             container.innerHTML = html;
 
-            // Attach event listeners
             document.querySelectorAll('.task-item').forEach(el => {
                 el.addEventListener('click', () => {
                     const data = JSON.parse(el.dataset.task);
@@ -622,7 +760,7 @@
                     html += `
                         <div class="${className}" data-task='${JSON.stringify(taskData)}'>
                             ${icon} ${task.name}${task.type === 'review' ? ` (${task.review})` : ''}
-                            ${isCompleted ? ' ✓' : ''}
+                            ${isCompleted ? ' ✔' : ''}
                         </div>
                     `;
                 });
@@ -752,7 +890,7 @@
                             <input type="checkbox" ${isCompleted ? 'checked' : ''} 
                                    onchange="window.toggleTaskCompletion('${taskKey}')"
                                    class="w-6 h-6 rounded border-gray-300 dark:border-theme-border text-emerald-600 dark:text-theme-accent focus:ring-2 focus:ring-emerald-500 dark:focus:ring-theme-accent cursor-pointer">
-                            <span class="text-lg font-semibold dark:text-theme-text">تم إنجاز هذه المهمة ✓</span>
+                            <span class="text-lg font-semibold dark:text-theme-text">تم إنجاز هذه المهمة ✔</span>
                         </label>
                     </div>
                 </div>
@@ -785,16 +923,13 @@
 
         document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
-        // Initialize
-        console.log('بدء التهيئة...');
+        // Initialize Application
+        console.log('🔄 بدء التهيئة...');
         initTheme();
         loadData();
         renderCalendar();
         updateStatistics();
-
-        // Set today's date as default
         document.getElementById('lessonDate').value = formatDate(new Date());
-        
         console.log('✅ التطبيق جاهز للعمل!');
     </script>
 </body>
