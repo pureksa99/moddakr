@@ -7,11 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="مددكر">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="مددكر">
-    <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💡</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💡</text></svg>">
-    <title>Moddakr - مددكر</title>
+    <title>مددكر - Moddakr</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -42,7 +38,6 @@
         }
       }
     </script>
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIti02K/Yr9mD2LEg2YTZhNmF2LDYp9mD2LHYqSIsCiAgInNob3J0X25hbWUiOiAi2YXYr9iv2YPYsSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDgxYzE1IiwKICAidGhlbWVfY29sb3IiOiAiIzA4MWMxNSIsCiAgImljb25zIjogW10KfQ==">
 </head>
 <body class="bg-gray-50 dark:bg-theme-dark-bg text-gray-800 dark:text-theme-text min-h-screen font-[system-ui]">
     
@@ -99,7 +94,7 @@
             </div>
             <div class="mt-6 bg-white/20 dark:bg-black/30 rounded-full h-8 relative">
                 <div id="progress-bar" class="bg-gradient-to-r from-green-400 to-emerald-500 dark:bg-theme-accent h-full rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
-                <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-shadow" id="progress-text">0%</div>
+                <div class="absolute inset-0 flex items-center justify-center text-sm font-bold" id="progress-text">0%</div>
             </div>
         </div>
 
@@ -117,15 +112,15 @@
                 <div class="flex flex-col md:flex-row gap-3 items-end">
                     <div class="flex flex-col flex-grow w-full">
                         <label for="lessonName" class="text-xs font-semibold mb-1 text-gray-500 dark:text-gray-400/80">اسم الدرس</label>
-                        <input id="lessonName" class="w-full p-3 border rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:shadow-[0_0_10px_rgba(99,241,99,0.5),inset_0_1px_2px_rgba(0,0,0,0.5)] [&::-webkit-calendar-picker-indicator]:dark:filter [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:dark:brightness-75 border-2 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-theme-accent/30" placeholder="مثال: حفظ الآيات من 1-5 سورة البقرة" type="text">
+                        <input id="lessonName" class="w-full p-3 border-2 rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:ring-theme-accent/30" placeholder="مثال: حفظ الآيات من 1-5 سورة البقرة" type="text">
                     </div>
                     <div class="flex flex-col w-full md:w-auto">
                         <label for="lessonDate" class="text-xs font-semibold mb-1 text-gray-500 dark:text-gray-400/80">حدد تاريخ الدرس</label>
-                        <input id="lessonDate" class="w-full p-3 border rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:shadow-[0_0_10px_rgba(99,241,99,0.5),inset_0_1px_2px_rgba(0,0,0,0.5)] [&::-webkit-calendar-picker-indicator]:dark:filter [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:dark:brightness-75 border-2 focus:ring-4 focus:ring-indigo-300 dark:focus:ring-theme-accent/30" type="date">
+                        <input id="lessonDate" class="w-full p-3 border-2 rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:ring-theme-accent/30" type="date">
                     </div>
-                    <button id="add-lesson" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-emerald-500 text-white border-transparent hover:bg-emerald-600 active:bg-emerald-700 focus:ring-emerald-400">
+                    <button id="add-lesson" class="w-full md:w-auto px-6 py-3 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border-2 dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 flex items-center justify-center gap-2 bg-emerald-500 text-white hover:bg-emerald-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
                         </svg>
                         <span>إضافة</span>
                     </button>
@@ -138,8 +133,8 @@
                     🗑️ حذف درس مخصص
                 </h3>
                 <div class="flex flex-col md:flex-row gap-3 items-center">
-                    <input id="delete-lesson-name" class="w-full p-3 border rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:shadow-[0_0_10px_rgba(99,241,99,0.5),inset_0_1px_2px_rgba(0,0,0,0.5)] [&::-webkit-calendar-picker-indicator]:dark:filter [&::-webkit-calendar-picker-indicator]:dark:invert [&::-webkit-calendar-picker-indicator]:dark:brightness-75 flex-grow" placeholder="أدخل اسم الدرس للحذف" type="text">
-                    <button id="delete-lesson" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-red-500 text-white border-transparent hover:bg-red-600 active:bg-red-700 focus:ring-red-400">
+                    <input id="delete-lesson-name" class="w-full p-3 border-2 rounded-md transition-all duration-300 text-gray-800 bg-gray-50 border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:text-theme-text dark:bg-black/20 dark:border-theme-border/50 dark:shadow-inner dark:shadow-black/50 dark:focus:outline-none dark:focus:border-theme-accent dark:focus:ring-theme-accent/30 flex-grow" placeholder="أدخل اسم الدرس للحذف" type="text">
+                    <button id="delete-lesson" class="w-full md:w-auto px-6 py-3 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border-2 dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 flex items-center justify-center gap-2 bg-red-500 text-white hover:bg-red-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                         </svg>
@@ -154,22 +149,22 @@
                     💾 حفظ تقدمك الدراسي
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <button id="download-schedule" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-indigo-500 text-white border-transparent hover:bg-indigo-600 active:bg-indigo-700 focus:ring-indigo-400">
+                    <button id="download-schedule" class="w-full px-6 py-3 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border-2 dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 flex items-center justify-center gap-2 bg-indigo-500 text-white hover:bg-indigo-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
                         <span>تحميل الجدول</span>
                     </button>
                     <input id="upload-input" accept=".json" class="hidden" type="file">
-                    <button id="upload-schedule" class="w-full md:w-auto px-6 py-2.5 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 dark:shadow-none flex items-center justify-center gap-2 bg-blue-500 text-white border-transparent hover:bg-blue-600 active:bg-blue-700 focus:ring-blue-400">
+                    <button id="upload-schedule" class="w-full px-6 py-3 rounded-md font-bold cursor-pointer transition-all duration-200 ease-in-out transform focus:outline-none text-sm uppercase tracking-wider shadow-md hover:shadow-lg active:shadow-sm focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-theme-dark-bg dark:bg-transparent dark:text-theme-accent dark:border-2 dark:border-theme-accent dark:hover:bg-theme-accent/10 dark:hover:shadow-glow-accent dark:active:scale-95 dark:active:bg-theme-accent/20 flex items-center justify-center gap-2 bg-blue-500 text-white hover:bg-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
                         </svg>
                         <span>رفع الجدول</span>
                     </button>
                 </div>
-                <p class="text-xs mt-3 text-gray-500 dark:text-gray-400/80">
-                    💡 تذكر دائماً: يجب عليك عند كل تعديل او إضافة أو حذف في تقويم جدولك الخاص أن تتأكد من تحميل نسخة احتياطية بصيغة JSON لحفظ جميع الدروس وتقدمك واستعادتها في أي وقت عند العودة. خصوصيتك محفوظة، بياناتك لا تغادر جهازك.
+                <p class="text-xs mt-3 text-center text-gray-500 dark:text-gray-400/80">
+                    💡 تذكر دائماً: يجب عليك عند كل تعديل أو إضافة أو حذف في تقويم جدولك الخاص أن تتأكد من تحميل نسخة احتياطية بصيغة JSON لحفظ جميع الدروس وتقدمك واستعادتها في أي وقت عند العودة. خصوصيتك محفوظة، بياناتك لا تغادر جهازك.
                 </p>
             </div>
         </div>
@@ -179,12 +174,12 @@
     </div>
 
     <!-- Task Modal -->
-    <div id="task-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div id="task-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-theme-dark-card rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
             <div class="p-6">
-                <div class="flex justify-between items-center mb-4 pb-4 border-b dark:border-theme-border">
+                <div class="flex justify-between items-center mb-4 pb-4 border-b-2 dark:border-theme-border">
                     <h2 class="text-2xl font-bold dark:text-theme-text">تفاصيل الدرس</h2>
-                    <button id="close-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-3xl leading-none">×</button>
+                    <button id="close-modal" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-3xl leading-none transition-transform hover:rotate-90">×</button>
                 </div>
                 <div id="modal-content" class="space-y-3"></div>
             </div>
@@ -192,16 +187,21 @@
     </div>
 
     <script>
+        console.log('التطبيق يعمل الآن...');
+        
         // Constants
         const REVIEW_INTERVALS = [1, 3, 8, 18, 48, 139];
         let lessons = [];
         let completedTasks = new Set();
-        let deferredPrompt;
 
         // Theme Management
         function initTheme() {
             const theme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.classList.toggle('dark', theme === 'dark');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
             updateThemeButton();
         }
 
@@ -218,45 +218,30 @@
         }
 
         // PWA Install
-        let deferredPrompt;
-        let isInstallable = false;
+        let deferredPrompt = null;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            isInstallable = true;
-        });
-
-        window.addEventListener('appinstalled', () => {
-            showMessage('تم تثبيت التطبيق بنجاح! 🎉');
-            deferredPrompt = null;
+            console.log('التطبيق جاهز للتثبيت');
         });
 
         document.getElementById('install-btn').addEventListener('click', async () => {
-            // Check if it's iOS
             const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+            const isInStandaloneMode = window.navigator.standalone;
             
             if (isIos && !isInStandaloneMode) {
-                // Show iOS instructions
                 showIOSInstructions();
-            } else if (deferredPrompt && isInstallable) {
-                // For Android and desktop
-                try {
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        showMessage('جاري تثبيت التطبيق...');
-                    }
-                    deferredPrompt = null;
-                } catch (error) {
-                    console.error('Install error:', error);
-                    showIOSInstructions();
+            } else if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    showMessage('جاري تثبيت التطبيق... 📱');
                 }
+                deferredPrompt = null;
             } else if (isInStandaloneMode) {
                 showMessage('التطبيق مثبت بالفعل! ✅', 'info');
             } else {
-                // Show manual instructions
                 showIOSInstructions();
             }
         });
@@ -275,26 +260,19 @@
                         <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                                 <span class="text-2xl">1️⃣</span>
-                                <p>اضغط على زر <strong>المشاركة</strong> 
-                                   <svg class="inline-block w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                       <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/>
-                                   </svg>
-                                   في أسفل الشاشة
-                                </p>
+                                <p>اضغط على زر <strong>المشاركة</strong> في أسفل الشاشة</p>
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                                 <span class="text-2xl">2️⃣</span>
-                                <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> 
-                                   <span class="inline-block">➕🏠</span>
-                                </p>
+                                <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong></p>
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                                 <span class="text-2xl">3️⃣</span>
-                                <p>اضغط <strong>"إضافة"</strong> في الأعلى</p>
+                                <p>اضغط <strong>"إضافة"</strong></p>
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
                                 <span class="text-2xl">✅</span>
-                                <p class="font-bold text-emerald-700 dark:text-emerald-300">ستجد أيقونة التطبيق 💡 على شاشتك الرئيسية!</p>
+                                <p class="font-bold text-emerald-700 dark:text-emerald-300">ستجد أيقونة "مددكر" 💡 على شاشتك الرئيسية!</p>
                             </div>
                         </div>
                     </div>
@@ -307,19 +285,11 @@
                         <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
                             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                                 <span class="text-2xl">📲</span>
-                                <p><strong>على Chrome/Edge:</strong> اضغط على ⋮ (القائمة) ثم اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية"</p>
-                            </div>
-                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
-                                <span class="text-2xl">🦊</span>
-                                <p><strong>على Firefox:</strong> اضغط على ⋮ ثم اختر "تثبيت"</p>
-                            </div>
-                            <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
-                                <span class="text-2xl">🍎</span>
-                                <p><strong>على Safari:</strong> اضغط على زر المشاركة ثم "إضافة إلى الشاشة الرئيسية"</p>
+                                <p><strong>على Chrome:</strong> اضغط على ⋮ ثم "تثبيت التطبيق"</p>
                             </div>
                             <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
                                 <span class="text-2xl">✅</span>
-                                <p class="font-bold text-emerald-700 dark:text-emerald-300">يمكنك استخدام التطبيق بدون إنترنت بعد التثبيت!</p>
+                                <p class="font-bold text-emerald-700 dark:text-emerald-300">يمكنك استخدام "مددكر" بدون إنترنت!</p>
                             </div>
                         </div>
                     </div>
@@ -332,7 +302,10 @@
 
         // Utility Functions
         function formatDate(date) {
-            return date.toISOString().split('T')[0];
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
 
         function addDays(date, days) {
@@ -386,8 +359,11 @@
 
         // Add Lesson
         document.getElementById('add-lesson').addEventListener('click', () => {
+            console.log('زر الإضافة تم الضغط عليه');
             const name = document.getElementById('lessonName').value.trim();
             const date = document.getElementById('lessonDate').value;
+
+            console.log('الاسم:', name, 'التاريخ:', date);
 
             if (!name || !date) {
                 showMessage('الرجاء إدخال اسم الدرس والتاريخ', 'error');
@@ -401,12 +377,16 @@
 
             lessons.push({ name, date });
             lessons.sort((a, b) => new Date(a.date) - new Date(b.date));
+            console.log('الدروس الحالية:', lessons);
+            
             saveData();
             renderCalendar();
             updateStatistics();
+            
             document.getElementById('lessonName').value = '';
-            document.getElementById('lessonDate').value = '';
-            showMessage(`تمت إضافة "${name}" بنجاح!`);
+            document.getElementById('lessonDate').value = formatDate(new Date());
+            
+            showMessage(`تمت إضافة "${name}" بنجاح! ✅`);
         });
 
         // Delete Lesson
@@ -450,7 +430,7 @@
             a.download = `jadwal_moddakr-${timestamp}.json`;
             a.click();
             URL.revokeObjectURL(url);
-            showMessage('تم تحميل الجدول بنجاح!');
+            showMessage('تم تحميل الجدول بنجاح! 📥');
         });
 
         // Upload
@@ -469,14 +449,18 @@
                     lessons = data.lessons || [];
                     completedTasks = new Set(data.completedTasks || []);
                     if (data.theme) {
-                        document.documentElement.classList.toggle('dark', data.theme === 'dark');
+                        if (data.theme === 'dark') {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
                         localStorage.setItem('theme', data.theme);
                         updateThemeButton();
                     }
                     saveData();
                     renderCalendar();
                     updateStatistics();
-                    showMessage('تم تحميل الجدول بنجاح!');
+                    showMessage('تم تحميل الجدول بنجاح! 📤');
                 } catch (error) {
                     showMessage('خطأ في قراءة الملف', 'error');
                 }
@@ -487,15 +471,25 @@
 
         // Save/Load Data
         function saveData() {
-            localStorage.setItem('lessons', JSON.stringify(lessons));
-            localStorage.setItem('completedTasks', JSON.stringify([...completedTasks]));
+            try {
+                localStorage.setItem('moddakr_lessons', JSON.stringify(lessons));
+                localStorage.setItem('moddakr_completedTasks', JSON.stringify([...completedTasks]));
+                console.log('تم حفظ البيانات بنجاح');
+            } catch (e) {
+                console.error('خطأ في الحفظ:', e);
+            }
         }
 
         function loadData() {
-            const savedLessons = localStorage.getItem('lessons');
-            const savedCompleted = localStorage.getItem('completedTasks');
-            if (savedLessons) lessons = JSON.parse(savedLessons);
-            if (savedCompleted) completedTasks = new Set(JSON.parse(savedCompleted));
+            try {
+                const savedLessons = localStorage.getItem('moddakr_lessons');
+                const savedCompleted = localStorage.getItem('moddakr_completedTasks');
+                if (savedLessons) lessons = JSON.parse(savedLessons);
+                if (savedCompleted) completedTasks = new Set(JSON.parse(savedCompleted));
+                console.log('تم تحميل البيانات:', lessons.length, 'دروس');
+            } catch (e) {
+                console.error('خطأ في التحميل:', e);
+            }
         }
 
         // Render Calendar
@@ -539,8 +533,6 @@
             });
 
             const dates = [...schedule.keys()].sort();
-            if (dates.length === 0) return;
-
             const startDate = new Date(dates[0]);
             const endDate = new Date(dates[dates.length - 1]);
             
@@ -567,7 +559,7 @@
         function renderMonth(date, schedule) {
             const year = date.getFullYear();
             const month = date.getMonth();
-            const monthName = date.toLocaleDateString('ar', { month: 'long', year: 'numeric' });
+            const monthName = date.toLocaleDateString('ar-SA', { month: 'long', year: 'numeric' });
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -650,10 +642,10 @@
             const modal = document.getElementById('task-modal');
             const content = document.getElementById('modal-content');
             
-            const gregorianDate = new Date(task.date).toLocaleDateString('ar-SA', { 
-                year: 'numeric', month: 'long', day: 'numeric', calendar: 'gregory' 
+            const gregorianDate = new Date(task.date + 'T00:00:00').toLocaleDateString('ar-SA', { 
+                year: 'numeric', month: 'long', day: 'numeric'
             });
-            const hijriDate = new Date(task.date).toLocaleDateString('ar-SA', { 
+            const hijriDate = new Date(task.date + 'T00:00:00').toLocaleDateString('ar-SA', { 
                 year: 'numeric', month: 'long', day: 'numeric', calendar: 'islamic-umalqura' 
             });
             
@@ -665,7 +657,7 @@
                 'العلم يرفع بيوتاً لا عماد لها 📚',
                 'النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪',
                 'من صبر ظفر، ومن ثابر أدرك 🎯',
-                'قطرة الماء تثقب الصخر، لا بالعنف ولكن بالتكرار 💧'
+                'قطرة الماء تثقب الصخر بالتكرار 💧'
             ];
             const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
             
@@ -716,7 +708,7 @@
             `;
             
             if (task.type === 'review') {
-                const originalDate = new Date(task.originalDate).toLocaleDateString('ar-SA', { 
+                const originalDate = new Date(task.originalDate + 'T00:00:00').toLocaleDateString('ar-SA', { 
                     year: 'numeric', month: 'long', day: 'numeric' 
                 });
                 detailsHTML += `
@@ -758,7 +750,7 @@
                     <div class="mt-6 pt-6 border-t-2 dark:border-theme-border">
                         <label class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-black/20 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-black/30 transition-colors">
                             <input type="checkbox" ${isCompleted ? 'checked' : ''} 
-                                   onchange="toggleTaskCompletion('${taskKey}')"
+                                   onchange="window.toggleTaskCompletion('${taskKey}')"
                                    class="w-6 h-6 rounded border-gray-300 dark:border-theme-border text-emerald-600 dark:text-theme-accent focus:ring-2 focus:ring-emerald-500 dark:focus:ring-theme-accent cursor-pointer">
                             <span class="text-lg font-semibold dark:text-theme-text">تم إنجاز هذه المهمة ✓</span>
                         </label>
@@ -770,7 +762,7 @@
             modal.classList.remove('hidden');
         }
 
-        function toggleTaskCompletion(taskKey) {
+        window.toggleTaskCompletion = function(taskKey) {
             if (completedTasks.has(taskKey)) {
                 completedTasks.delete(taskKey);
             } else {
@@ -779,7 +771,7 @@
             saveData();
             updateStatistics();
             renderCalendar();
-        }
+        };
 
         document.getElementById('close-modal').addEventListener('click', () => {
             document.getElementById('task-modal').classList.add('hidden');
@@ -794,19 +786,16 @@
         document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
         // Initialize
+        console.log('بدء التهيئة...');
         initTheme();
         loadData();
         renderCalendar();
         updateStatistics();
 
         // Set today's date as default
-        document.getElementById('lessonDate').valueAsDate = new Date();
-
-        // Register Service Worker for offline support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZSkgewogIGUud2FpdFVudGlsKAogICAgY2FjaGVzLm9wZW4oJ21vZGRha3ItdjEnKS50aGVuKGZ1bmN0aW9uKGNhY2hlKSB7CiAgICAgIHJldHVybiBjYWNoZS5hZGRBbGwoWycuLyddKTsKICAgIH0pCiAgKTsKfSk7CgpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZnVuY3Rpb24oZSkgewogIGUucmVzcG9uZFdpdGgoCiAgICBjYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKGZ1bmN0aW9uKHJlc3BvbnNlKSB7CiAgICAgIHJldHVybiByZXNwb25zZSB8fCBmZXRjaChlLnJlcXVlc3QpOwogICAgfSkKICApOwp9KTs=')
-                .catch(() => console.log('Service Worker registration skipped'));
-        }
+        document.getElementById('lessonDate').value = formatDate(new Date());
+        
+        console.log('✅ التطبيق جاهز للعمل!');
     </script>
 </body>
 </html>
