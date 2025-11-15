@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moddakr - مددكر لجدولة الإستذكار</title>
+    <title>Dynamic Study Schedule Calendar - Enhanced Version</title>
     <style>
         /* CSS Variables for Theme */
         :root {
@@ -24,22 +24,23 @@
         }
 
         [data-theme="dark"] {
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --bg-tertiary: #374151;
-            --text-primary: #e2e8f0;
-            --text-secondary: #a0aec0;
-            --text-tertiary: #cbd5e0;
-            --border-color: #4a5568;
-            --border-color-light: #4a5568;
-            --shadow-color: rgba(0,0,0,0.3);
-            --control-bg: #2d3748;
-            --control-border: #6366f1;
-            --day-hover: #374151;
-            --month-header-bg: #1a202c;
-            --month-header-text: #e2e8f0;
+            --bg-primary: #0a1f1a;
+            --bg-secondary: #0d2922;
+            --bg-tertiary: #153830;
+            --text-primary: #e8f5f1;
+            --text-secondary: #a0c4bc;
+            --text-tertiary: #c8e6de;
+            --border-color: #1a4d3f;
+            --border-color-light: #1a4d3f;
+            --shadow-color: rgba(0,0,0,0.4);
+            --control-bg: #0d2922;
+            --control-border: #10b981;
+            --day-hover: #153830;
+            --month-header-bg: #0a1f1a;
+            --month-header-text: #e8f5f1;
         }
 
+        /* Reset and Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -54,6 +55,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* Utility Classes */
         .container {
             max-width: 1280px;
             margin: 0 auto;
@@ -97,6 +99,7 @@
         .shadow-md { box-shadow: 0 4px 6px -1px var(--shadow-color); }
         .shadow-xl { box-shadow: 0 20px 25px -5px var(--shadow-color); }
 
+        /* Header with Theme Toggle */
         .header-container {
             display: flex;
             justify-content: space-between;
@@ -113,6 +116,7 @@
             margin: 0;
         }
 
+        /* Theme Toggle Button */
         .theme-toggle {
             background: var(--bg-secondary);
             border: 2px solid var(--border-color);
@@ -145,6 +149,7 @@
             margin-bottom: 0.75rem;
         }
 
+        /* Message Box */
         #message-box {
             max-width: 1280px;
             margin: 1.25rem auto;
@@ -165,6 +170,7 @@
             color: #065f46;
         }
 
+        /* Statistics Styles */
         .stats-container {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-radius: 0.75rem;
@@ -217,19 +223,20 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 1rem;
             height: 30px;
+            overflow: hidden;
             position: relative;
             -webkit-tap-highlight-color: transparent;
+            direction: ltr;
         }
 
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
             transition: width 0.5s ease;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-width: 0;
             border-radius: 1rem;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
         }
 
         .progress-text {
@@ -240,12 +247,12 @@
             font-weight: 700;
             font-size: 0.9rem;
             color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
             z-index: 10;
-            width: 100%;
-            text-align: center;
+            pointer-events: none;
         }
 
+        /* Controls Section */
         #controls {
             background-color: var(--control-bg);
             border-radius: 0.75rem;
@@ -277,6 +284,7 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
+        /* Buttons */
         .btn {
             padding: 0.75rem 1.5rem;
             border: none;
@@ -324,6 +332,7 @@
             background-color: #4f46e5;
         }
 
+        /* Calendar Styles */
         .month-grid {
             box-shadow: 0 4px 12px var(--shadow-color);
             border-radius: 0.5rem;
@@ -390,6 +399,7 @@
             padding: 0.25rem;
         }
 
+        /* Task Styles - Enhanced */
         .task {
             padding: 6px 8px;
             border-radius: 0.375rem;
@@ -466,6 +476,7 @@
             color: #10b981;
         }
 
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -646,6 +657,7 @@
             margin-top: 0.5rem;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
@@ -728,6 +740,7 @@
             }
         }
 
+        /* Additional Utilities */
         .text-sm { font-size: 0.875rem; }
         .text-xs { font-size: 0.75rem; }
         .text-xl { font-size: 1.25rem; }
@@ -746,6 +759,7 @@
             }
         }
 
+        /* Dark theme specific adjustments */
         [data-theme="dark"] .msg-error {
             background-color: #7f1d1d;
             color: #fca5a5;
@@ -757,7 +771,59 @@
         }
 
         [data-theme="dark"] .control-section {
-            background-color: rgba(255, 255, 255, 0.02);
+            background-color: rgba(16, 185, 129, 0.05);
+            border-color: #1a4d3f;
+        }
+
+        [data-theme="dark"] #controls {
+            background-color: var(--control-bg);
+            border-right: 8px solid #10b981;
+        }
+
+        [data-theme="dark"] .stats-container {
+            background: linear-gradient(135deg, #0f766e 0%, #065f46 100%);
+        }
+
+        [data-theme="dark"] .control-input {
+            background-color: #153830;
+            border-color: #1a4d3f;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .control-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+
+        [data-theme="dark"] .modal-content {
+            background-color: #0d2922;
+            border: 2px solid #1a4d3f;
+        }
+
+        [data-theme="dark"] .month-grid {
+            background: #0d2922;
+            border: 1px solid #1a4d3f;
+        }
+
+        [data-theme="dark"] .day-cell {
+            background-color: #0d2922;
+            border-color: #1a4d3f;
+        }
+
+        [data-theme="dark"] .btn-green {
+            background-color: #10b981;
+        }
+
+        [data-theme="dark"] .btn-green:hover {
+            background-color: #059669;
+        }
+
+        [data-theme="dark"] .btn-indigo {
+            background-color: #10b981;
+        }
+
+        [data-theme="dark"] .btn-indigo:hover {
+            background-color: #059669;
         }
     </style>
 </head>
@@ -778,6 +844,7 @@
     <div id="message-box" class="hidden"></div>
 
     <div class="container">
+        <!-- Statistics Section -->
         <div class="stats-container">
             <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">📊 إحصائيات الأداء</h2>
             <div class="stats-grid">
@@ -799,8 +866,9 @@
                 </div>
             </div>
             <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar" style="width: 0%;">
+                </div>
                 <div class="progress-text" id="progress-text">0%</div>
-                <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
             </div>
         </div>
 
@@ -810,15 +878,17 @@
                 إجمالي الدروس المضافة: <span id="lesson-count-display" class="text-indigo">0</span>
             </div>
             
+            <!-- Add New Lesson Section -->
             <div class="control-section">
                 <h3>➕ إضافة درس جديد للمراجعة</h3>
                 <div class="flex flex-col flex-row-desktop gap-3 items-center">
-                    <input type="text" id="new-lesson-name" class="control-input" placeholder="مثال: حفظ الآيات من 1-5 سورة البقرة" required>
+                    <input type="text" id="new-lesson-name" class="control-input" placeholder="عنوان الدرس (مثال: الفصل العاشر)" required>
                     <input type="date" id="new-lesson-date" class="control-input" required>
                     <button id="add-lesson-btn" class="btn btn-green btn-auto-width">إضافة</button>
                 </div>
             </div>
 
+            <!-- Delete Lesson Section -->
             <div class="control-section">
                 <h3>❌ حذف درس مخصص</h3>
                 <div class="flex flex-col flex-row-desktop gap-3 items-center">
@@ -827,6 +897,7 @@
                 </div>
             </div>
 
+            <!-- Save/Load Section -->
             <div class="control-section">
                 <h3>💾 حفظ وتحميل التقدم</h3>
                 <div class="flex flex-col flex-row-desktop gap-3 items-center">
@@ -835,15 +906,17 @@
                     <button id="upload-btn" class="btn btn-blue btn-auto-width">📤 رفع الجدول</button>
                 </div>
                 <p class="text-xs mt-2" style="color: var(--text-secondary);">
-                    💡 يتم الحفظ التلقائي في المتصفح. يمكنك أيضاً تحميل نسخة احتياطية بصيغة HTML لحفظ جميع الدروس وتقدمك واستعادتها في أي وقت.
+                    💡 قم بتحميل الجدول بصيغة (Html) لحفظ جميع الدروس وتقدمك. يمكنك تحميل الملف المحفوظ لاستعادة بياناتك في أي وقت.
                 </p>
             </div>
         </div>
 
         <div id="calendar-container">
+            <!-- Calendar renders here -->
         </div>
     </div>
 
+    <!-- Task Details Modal -->
     <div id="task-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -851,74 +924,30 @@
                 <button class="modal-close" id="modal-close">×</button>
             </div>
             <div class="modal-body" id="modal-body">
+                <!-- Details populated by JavaScript -->
             </div>
         </div>
     </div>
 
     <script>
+        // Constants and Variables
         const INITIAL_LESSONS = 0;
         const REST_DAYS = 2;
         const LESSON_INTERVAL = REST_DAYS + 1;
         const REVIEW_INTERVALS = [1, 3, 8, 18, 48, 139];
 
         let INITIAL_LESSON_COUNT = INITIAL_LESSONS;
+        
         let CUSTOM_LESSONS = []; 
         const schedule = new Map(); 
         let maxDate = null;
         let minDate = null;
+        
         let messageBox;
         let currentTheme = 'light';
-        let completedTasks = new Set();
+        let completedTasks = new Set(); // Track completed tasks
 
-        function autoSaveData() {
-            try {
-                const data = {
-                    customLessons: CUSTOM_LESSONS.map(l => ({
-                        name: l.name,
-                        dateStr: l.dateStr,
-                        lesson: l.lesson
-                    })),
-                    theme: currentTheme,
-                    completedTasks: [...completedTasks],
-                    lastSaved: new Date().toISOString()
-                };
-                localStorage.setItem('scheduleData', JSON.stringify(data));
-            } catch (e) {
-                console.error('Error auto-saving data:', e);
-            }
-        }
-
-        function loadLocalData() {
-            try {
-                const saved = localStorage.getItem('scheduleData');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    
-                    if (data.customLessons) {
-                        CUSTOM_LESSONS = data.customLessons.map(l => ({
-                            ...l,
-                            date: new Date(l.dateStr + 'T00:00:00Z')
-                        }));
-                    }
-                    
-                    if (data.theme) {
-                        currentTheme = data.theme;
-                        document.documentElement.setAttribute('data-theme', currentTheme);
-                        updateThemeButton();
-                    }
-                    
-                    if (data.completedTasks) {
-                        completedTasks = new Set(data.completedTasks);
-                    }
-                    
-                    return true;
-                }
-            } catch (e) {
-                console.error('Error loading local data:', e);
-            }
-            return false;
-        }
-
+        // Theme Toggle
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'light';
             currentTheme = savedTheme;
@@ -931,7 +960,6 @@
             document.documentElement.setAttribute('data-theme', currentTheme);
             localStorage.setItem('theme', currentTheme);
             updateThemeButton();
-            autoSaveData();
         }
 
         function updateThemeButton() {
@@ -948,6 +976,7 @@
             }
         }
 
+        // Show Message Function
         function showMessage(text, isError = false) {
             if (!messageBox) return;
             messageBox.textContent = text;
@@ -964,6 +993,7 @@
             }, 5000);
         }
 
+        // Toggle task completion
         function toggleTaskCompletion(taskKey, element) {
             const checkbox = element.querySelector('input[type="checkbox"]');
             
@@ -976,11 +1006,11 @@
             }
             
             saveCompletedTasks();
-            autoSaveData();
             updateStatistics();
             renderCalendar();
         }
 
+        // Save completed tasks to localStorage
         function saveCompletedTasks() {
             try {
                 localStorage.setItem('completedTasks', JSON.stringify([...completedTasks]));
@@ -989,6 +1019,7 @@
             }
         }
 
+        // Load completed tasks from localStorage
         function loadCompletedTasks() {
             try {
                 const saved = localStorage.getItem('completedTasks');
@@ -1001,10 +1032,12 @@
             }
         }
 
+        // Update statistics
         function updateStatistics() {
             let totalTasks = 0;
             let completedCount = 0;
             
+            // Count all tasks (lessons + reviews) regardless of date
             schedule.forEach((tasks, dateStr) => {
                 tasks.forEach(task => {
                     totalTasks++;
@@ -1029,6 +1062,7 @@
             progressText.textContent = completionPercentage + '%';
         }
 
+        // Modal Functions
         function showTaskDetails(taskData) {
             const modal = document.getElementById('task-modal');
             const modalBody = document.getElementById('modal-body');
@@ -1098,10 +1132,7 @@
                 detailsHTML += `
                     <div class="detail-row">
                         <div class="detail-label">✨ الهدف:</div>
-                        <div class="detail-value">التركيز على فهم وحفظ محتوى الدرس للمرة الأولى,
-من خلال تجزته إلى معلومات صغيرة كجمل
-ثم تكرار كل معلومة او كل جزء من النص
-على الأقل 50 مرة.</div>
+                        <div class="detail-value">التركيز على فهم وحفظ محتوى الدرس للمرة الأولى</div>
                     </div>
                 `;
             }
@@ -1128,16 +1159,19 @@
             modal.classList.remove('active');
         }
 
+        // Create unique task key
         function getTaskKey(dateStr, name, reviewNum = 0) {
             return `${dateStr}|${name}|${reviewNum}`;
         }
         
+        // Add days to date
         function addDays(date, days) {
             const result = new Date(date);
             result.setDate(result.getDate() + days);
             return result;
         }
 
+        // Format date to YYYY-MM-DD
         function formatDate(date) {
             const year = date.getUTCFullYear();
             const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
@@ -1145,6 +1179,7 @@
             return `${year}-${month}-${day}`;
         }
 
+        // Motivational quotes array
         const MOTIVATIONAL_QUOTES = [
             'من جدّ وجد، ومن سار على الدرب وصل 🌟',
             'العلم يرفع بيوتاً لا عماد لها، والجهل يهدم بيوت العز والكرم 📚',
@@ -1163,10 +1198,12 @@
             'الفشل ليس سقوطاً، بل هو عدم النهوض بعد السقوط 🦅'
         ];
 
+        // Get random motivational quote
         function getRandomQuote() {
             return MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)];
         }
 
+        // Format date to Arabic (Gregorian)
         function formatDateArabic(dateStr) {
             const date = new Date(dateStr + 'T00:00:00Z');
             return date.toLocaleDateString('ar-SA', { 
@@ -1178,6 +1215,7 @@
             });
         }
 
+        // Format date to Hijri
         function formatDateHijri(dateStr) {
             const date = new Date(dateStr + 'T00:00:00Z');
             return date.toLocaleDateString('ar-SA', { 
@@ -1189,6 +1227,7 @@
             });
         }
 
+        // Generate tasks for lesson
         function generateTasks(lessonNum, lessonDate, lessonName = null) {
             const lessonDateStr = formatDate(lessonDate);
             const isFirst = lessonNum === 1 && CUSTOM_LESSONS.length === 1 && !!lessonName; 
@@ -1233,6 +1272,7 @@
             });
         }
 
+        // Build complete schedule
         function buildSchedule() {
             schedule.clear();
             maxDate = null;
@@ -1251,9 +1291,9 @@
 
             updateStatistics();
             renderCalendar();
-            autoSaveData();
         }
 
+        // Add new custom lesson
         function addNewCustomLesson() {
             const dateInput = document.getElementById('new-lesson-date');
             const nameInput = document.getElementById('new-lesson-name');
@@ -1303,6 +1343,7 @@
             nameInput.value = '';
         }
         
+        // Delete lesson by name
         function deleteLessonByName() {
             const nameInput = document.getElementById('delete-lesson-name');
             const lessonName = nameInput.value.trim();
@@ -1329,6 +1370,7 @@
             nameInput.value = '';
         }
         
+        // Handle task click - show details
         function handleTaskClick(event) {
             const taskEl = event.currentTarget;
             const { date, name, type, review, originaldate, interval, isfirst } = taskEl.dataset;
@@ -1346,6 +1388,7 @@
             showTaskDetails(taskData);
         }
 
+        // Download schedule
         function downloadSchedule() {
             const data = {
                 customLessons: CUSTOM_LESSONS.map(l => ({
@@ -1371,6 +1414,7 @@
             const a = document.createElement('a');
             a.href = url;
             
+            // Create filename with date and time
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -1385,10 +1429,12 @@
             showMessage('تم تنزيل الجدول بنجاح! 📥');
         }
 
+        // Upload schedule
         function uploadSchedule() {
             document.getElementById('upload-input').click();
         }
 
+        // Handle file upload
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1438,6 +1484,7 @@
             event.target.value = '';
         }
 
+        // Render calendar
         function renderCalendar() {
             const container = document.getElementById('calendar-container');
             container.innerHTML = ''; 
@@ -1600,9 +1647,8 @@
             }
         }
         
+        // Load saved data on page load
         function loadSavedData() {
-            let loadedFromFile = false;
-            
             if (window.SAVED_DATA) {
                 CUSTOM_LESSONS = window.SAVED_DATA.customLessons.map(l => ({
                     ...l,
@@ -1619,16 +1665,10 @@
                     completedTasks = new Set(window.SAVED_DATA.completedTasks);
                     saveCompletedTasks();
                 }
-                
-                loadedFromFile = true;
-                autoSaveData();
-            }
-            
-            if (!loadedFromFile) {
-                loadLocalData();
             }
         }
 
+        // Setup app and initialize
         function setupApp() {
             messageBox = document.getElementById('message-box'); 
 
@@ -1645,6 +1685,7 @@
             document.getElementById('upload-input').addEventListener('change', handleFileUpload);
             document.getElementById('modal-close').addEventListener('click', closeModal);
             
+            // Close modal when clicking outside
             document.getElementById('task-modal').addEventListener('click', function(e) {
                 if (e.target.id === 'task-modal') {
                     closeModal();
