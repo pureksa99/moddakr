@@ -25,7 +25,7 @@
 
   [تجربة التطبيق (Live Demo) 🚀](https://pureksa99.github.io/moddakr/)
   <p></p>
-  [Bit.ly/moddaker](https://bit.ly/moddakr)
+  (https://bit.ly/moddakr)
 
 </div>
 
