@@ -75,6 +75,7 @@
 ##
 <div align="center">
   تم التطوير بحب 💚 لخدمة طلاب العلم
+</div>
+<div align="center">
   https://bit.ly/moddakr
 </div>
-
