@@ -24,9 +24,10 @@
   </p>
 
   [تجربة التطبيق (Live Demo) 🚀](https://pureksa99.github.io/moddakr/)
-  [bit.ly/moddakr](https://bit.ly/moddakr/)
 </div
-
+<div align="center">
+  [Bit.ly/moddakr](https://bit.ly/moddakr/)
+</div>
 ---
 
 ## ✨ عن المشروع
