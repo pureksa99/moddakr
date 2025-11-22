@@ -24,7 +24,7 @@
   </p>
 
   [تجربة التطبيق (Live Demo) 🚀](https://pureksa99.github.io/moddakr/)
-  [تجربة التطبيق (Live Demo) 🚀](https://pureksa99.github.io/moddakr/)
+  [Bit.ly/moddaker](https://bit.ly/moddakr/)
 
 </div>
 
