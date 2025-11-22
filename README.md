@@ -27,7 +27,7 @@
   
 </div
 <div align="center">
-  [Bit.ly/moddakr](https://bit.ly/moddakr/)
+(https://bit.ly/moddakr/)
 </div>
 ---
 
