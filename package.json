@@ -1,0 +1,16 @@
+{
+  "name": "moddakr-pwa",
+  "version": "3.0.0",
+  "description": "Progressive Web App for Quran memorization and review scheduling",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
