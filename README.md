@@ -1,6 +1,15 @@
 <div align="center">
 
-  <img src="https://cdn-icons-png.flaticon.com/512/3063/3063835.png" alt="Moddakr Logo" width="120">
+  <!-- علم السعودية -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/320px-Flag_of_Saudi_Arabia.svg.png" alt="علم المملكة العربية السعودية" width="150">
+  
+  <br><br>
+
+  <!-- فيديو اليوتيوب (صورة قابلة للنقر) -->
+  <a href="https://www.youtube.com/watch?v=2x9RLn5IWR8" target="_blank">
+    <img src="https://img.youtube.com/vi/2x9RLn5IWR8/maxresdefault.jpg" alt="شرح تطبيق مدكر" width="600" style="border-radius: 10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);">
+  </a>
+  <p>👆 اضغط لمشاهدة الفيديو التعريفي 👆</p>
 
   # 💡 مُدَّكِر | Moddakr
   
@@ -14,7 +23,7 @@
     تطبيق ويب تقدمي (PWA) يساعد طلاب العلم وحفظة القرآن الكريم على تنظيم جداول المراجعة تلقائياً بناءً على خوارزميات علمية لضمان عدم النسيان.
   </p>
 
-  [تجربة التطبيق (Live Demo) 🚀](https://pureksa99.github.io/moddakr/) <!-- ضع رابط مشروعك هنا بعد الرفع -->
+  [تجربة التطبيق (Live Demo) 🚀](https://pureksa99.github.io/moddakr/)
 </div>
 
 ---
