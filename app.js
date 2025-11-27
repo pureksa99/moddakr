@@ -619,7 +619,7 @@ function renderMonth(date, schedule) {
             const isCompleted = completedTasks.has(taskKey);
             const taskData = { ...task, date: currentDate };
             const isMobile = window.innerWidth < 768;
-            let className = "task-item text-xs p-1.5 rounded cursor-pointer transition-all hover:scale-105 hover:shadow-lg ";
+            let className = "task-item text-xs p-1.5 rounded cursor-pointer transition-all hover:scale-105 hover:shadow-lg overflow-hidden whitespace-nowrap text-ellipsis ";
             let icon = "";
             let displayText = "";
             if (task.type === "new") {
@@ -673,7 +673,7 @@ function showTaskModal(task) {
         "العلم يرفع بيوتاً لا عماد لها 📚",
         "النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪",
         "من صبر ظفر، ومن ثابر أدرك 🎯",
-        "قطرة الماء تثقب الصخر بالتكرار "
+        "قطرة الماء تثقب الصخر بالتكرار 💧",
         'العلم يرفع بيوتاً لا عماد لها، والجهل يهدم بيوت العز والكرم 📚',
         'النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪',
         'من صبر ظفر، ومن ثابر أدرك 🎯',
@@ -697,15 +697,20 @@ function showTaskModal(task) {
         badgeText = `مراجعة رقم ${task.review}`;
     } else if (task.isFirst) {
         badgeClass = "bg-blue-500 text-white dark:bg-theme-accent dark:text-theme-dark-bg";
-        badgeText = "درسك الأول! ��";
+        badgeText = "درسك الأول! ";
     }
+
+    // هنا نقوم بتحويل النص إلى Markdown
+    const renderedDescription = marked.parse(task.name);
+
     let detailsHTML = `
         <div class="space-y-3">
             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                 <span class="text-2xl">📚</span>
                 <div class="flex-1">
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">اسم الدرس:</p>
-                    <p class="font-bold text-lg dark:text-theme-text">${task.name}</p>
+                    <!-- استبدال P بـ DIV ودعم Markdown -->
+                    <div class="font-bold text-lg dark:text-theme-text markdown-view">${renderedDescription}</div>
                 </div>
             </div>
             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
