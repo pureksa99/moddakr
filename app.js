@@ -1,5 +1,16 @@
 console.log("🚀 بدء تشغيل التطبيق - وضع Offline-First...");
 
+// === ✅ تهيئة مكتبة Marked بشكل صحيح ===
+if (typeof marked !== 'undefined') {
+    // هذه الإعدادات تجبر المكتبة على تحويل زر Enter إلى سطر جديد <br>
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
+} else {
+    console.warn("⚠️ مكتبة Marked لم يتم تحميلها بشكل صحيح. سيتم استخدام النص العادي.");
+}
+
 // === MODULE: CONNECTION STATE MANAGEMENT ===
 let isOnline = navigator.onLine;
 let pendingSyncData = [];
@@ -700,8 +711,21 @@ function showTaskModal(task) {
         badgeText = "درسك الأول! ";
     }
 
-    // هنا نقوم بتحويل النص إلى Markdown
-    const renderedDescription = marked.parse(task.name);
+    // ✅ التحويل الذكي للنص
+    let renderedDescription = "";
+    try {
+        if (typeof marked !== 'undefined') {
+            // استخدام المكتبة إذا كانت محملة
+            renderedDescription = marked.parse(task.name);
+        } else {
+            // استخدام fallback إذا فشلت المكتبة
+            renderedDescription = task.name.replace(/\n/g, '<br>');
+        }
+    } catch (e) {
+        console.error("Markdown parse error:", e);
+        // في حال حدوث خطأ، اعرض النص مع تحويل الأسطر الجديدة فقط
+        renderedDescription = task.name.replace(/\n/g, '<br>');
+    }
 
     let detailsHTML = `
         <div class="space-y-3">
@@ -709,7 +733,7 @@ function showTaskModal(task) {
                 <span class="text-2xl">📚</span>
                 <div class="flex-1">
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">اسم الدرس:</p>
-                    <!-- استبدال P بـ DIV ودعم Markdown -->
+                    <!-- ✅ عرض النص المنسق هنا -->
                     <div class="font-bold text-lg dark:text-theme-text markdown-view">${renderedDescription}</div>
                 </div>
             </div>
