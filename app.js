@@ -191,10 +191,6 @@ window.addEventListener("load", () => {
 document.getElementById("install-btn").addEventListener("click", async () => {
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isInStandaloneMode = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
-    console.log("🖱️ تم الضغط على زر التثبيت");
-    console.log("📱 iOS:", isIos);
-    console.log("🖥️ Standalone Mode:", isInStandaloneMode);
-    console.log("💾 Deferred Prompt:", !!deferredPrompt);
     if (isInStandaloneMode) {
         showMessage("التطبيق مثبت بالفعل! ✅", "info");
         return;
@@ -205,10 +201,8 @@ document.getElementById("install-btn").addEventListener("click", async () => {
     }
     if (deferredPrompt) {
         try {
-            console.log("📲 عرض نافذة التثبيت...");
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
-            console.log("👤 اختيار المستخدم:", outcome);
             if (outcome === "accepted") {
                 showMessage("جارٍ تثبيت التطبيق... 📱", "success");
             } else {
@@ -220,7 +214,6 @@ document.getElementById("install-btn").addEventListener("click", async () => {
             showIOSInstructions();
         }
     } else {
-        console.log("ℹ️ لا يوجد Deferred Prompt - عرض التعليمات");
         showIOSInstructions();
     }
 });
@@ -248,15 +241,6 @@ function showIOSInstructions() {
                         <span class="text-2xl">3️⃣</span>
                         <p>اضغط على <strong>"إضافة"</strong> في الزاوية العليا اليسرى</p>
                     </div>
-                    <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
-                        <span class="text-2xl">✅</span>
-                        <p class="font-bold text-emerald-700 dark:text-emerald-300">ستجد أيقونة "مُدَّكِر" 💡 على شاشتك الرئيسية!</p>
-                    </div>
-                    <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-2 border-blue-500">
-                        <p class="text-sm text-blue-700 dark:text-blue-300">
-                            <strong>💡 بيانات المتصفح.:</strong> التطبيق سيعمل بكامل وظائفه بدون إنترنت بعد التثبيت مالم يتم حذف بيانات المتصفح!
-                        </p>
-                    </div>
                 </div>
             </div>
         `;
@@ -266,22 +250,7 @@ function showIOSInstructions() {
                 <div class="text-6xl mb-4">📱</div>
                 <h3 class="text-xl font-bold dark:text-theme-text mb-4">تثبيت التطبيق</h3>
                 <div class="text-right space-y-3 text-gray-700 dark:text-gray-300">
-                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
-                        <span class="text-2xl">🌐</span>
-                        <p><strong>على Chrome:</strong> اضغط على القائمة (⋮) ثم "تثبيت التطبيق"</p>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
-                        <span class="text-2xl">🦊</span>
-                        <p><strong>على Firefox:</strong> اضغط على أيقونة المنزل (+) في شريط العنوان</p>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
-                        <span class="text-2xl">🎯</span>
-                        <p><strong>على Edge:</strong> اضغط على (⋯) ثم "التطبيقات" ثم "تثبيت هذا الموقع كتطبيق"</p>
-                    </div>
-                    <div class="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border-2 border-emerald-500">
-                        <span class="text-2xl">✅</span>
-                        <p class="font-bold text-emerald-700 dark:text-emerald-300">يمكنك استخدام "مُدَّكِر" بدون إنترنت!</p>
-                    </div>
+                    <p class="text-center">استخدم خيار "تثبيت التطبيق" من قائمة المتصفح لديك.</p>
                 </div>
             </div>
         `;
@@ -320,6 +289,20 @@ function showMessage(text, type = "success") {
     setTimeout(() => messageBox.classList.add("hidden"), 5000);
 }
 
+// NEW: Markdown Parser
+function parseMarkdown(text) {
+    if (!text) return "";
+    let html = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    html = html.replace(/^### (.*$)/gim, '<h3 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-2 mb-1">$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2 class="text-xl font-bold text-emerald-700 dark:text-emerald-300 mt-3 mb-2 border-b border-emerald-500/30 pb-1">$1</h2>');
+    html = html.replace(/\*\*(.*)\*\*/gim, '<strong class="text-indigo-600 dark:text-theme-accent font-bold">$1</strong>');
+    html = html.replace(/\*(.*)\*/gim, '<em class="text-gray-600 dark:text-gray-300 italic">$1</em>');
+    html = html.replace(/`(.*)`/gim, '<code class="bg-gray-200 dark:bg-gray-800 text-red-500 dark:text-pink-400 px-1.5 py-0.5 rounded font-mono text-sm">$1</code>');
+    html = html.replace(/^\- (.*$)/gim, '<li class="flex items-start gap-2 ml-4"><span class="text-emerald-500 mt-1">•</span><span>$1</span></li>');
+    html = html.replace(/\n/gim, '<br>');
+    return html;
+}
+
 // Statistics
 function updateStatistics() {
     const allTasks = [];
@@ -347,13 +330,16 @@ function updateStatistics() {
     document.getElementById("progress-text").textContent = percentage + "%";
 }
 
-// Add Lesson
+// Add Lesson (UPDATED)
 document.getElementById("add-lesson").addEventListener("click", () => {
     console.log("➕ زر الإضافة تم الضغط عليه");
-    const name = document.getElementById("lessonName").value.trim();
-    const date = document.getElementById("lessonDate").value;
+    const nameInput = document.getElementById("lessonName");
+    const dateInput = document.getElementById("lessonDate");
+    const detailsInput = document.getElementById("lessonDetails"); // New Input
 
-    console.log("📝 الاسم:", name, "📅 التاريخ:", date);
+    const name = nameInput.value.trim();
+    const date = dateInput.value;
+    const details = detailsInput.value.trim(); // Get details
 
     if (!name || !date) {
         showMessage("الرجاء إدخال اسم الدرس والتاريخ", "error");
@@ -365,20 +351,25 @@ document.getElementById("add-lesson").addEventListener("click", () => {
         return;
     }
 
-    lessons.push({ name, date });
+    // Add with details
+    lessons.push({ name, date, details });
     lessons.sort((a, b) => new Date(a.date) - new Date(b.date));
-    console.log("✅ الدروس الحالية:", lessons);
+    
     if (!isOnline) {
-        addToPendingSync("add_lesson", { name, date });
+        addToPendingSync("add_lesson", { name, date, details });
         showMessage(`تمت إضافة "${name}" بنجاح محليًا! سيتم المزامنة عند الاتصال ✅`, "success");
     } else {
         showMessage(`تمت إضافة "${name}" بنجاح! ✅`, "success");
     }
+    
     saveData();
     renderCalendar();
     updateStatistics();
-    document.getElementById("lessonName").value = "";
-    document.getElementById("lessonDate").value = formatDate(new Date());
+    
+    // Clear inputs
+    nameInput.value = "";
+    dateInput.value = formatDate(new Date());
+    detailsInput.value = "";
 });
 
 // Delete Lesson
@@ -418,7 +409,7 @@ document.getElementById("download-schedule").addEventListener("click", () => {
         theme: document.documentElement.classList.contains("dark") ? "dark" : "light",
         pendingSync: pendingSyncData,
         exportDate: new Date().toISOString(),
-        version: "3.0-pwa"
+        version: "3.1-pwa"
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -426,15 +417,11 @@ document.getElementById("download-schedule").addEventListener("click", () => {
     const a = document.createElement("a");
     a.href = url;
     const now = new Date();
-    const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}_${String(now.getHours()).padStart(2,"0")}-${String(now.getMinutes()).padStart(2,"0")}`;
+    const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}_${String(now.getHours()).padStart(2,"0")}`;
     a.download = `jadwal_moddakr-${timestamp}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    if (!isOnline) {
-        showMessage("تم تحميل الجدول بنجاح محليًا! 📥 (يعمل بدون إنترنت)", "success");
-    } else {
-        showMessage("تم تحميل الجدول بنجاح! 📥", "success");
-    }
+    showMessage("تم تحميل الجدول بنجاح! 📥", "success");
 });
 
 // Upload
@@ -468,14 +455,9 @@ document.getElementById("upload-input").addEventListener("change", (e) => {
             renderCalendar();
             updateStatistics();
             updateSyncIndicator();
-            if (!isOnline) {
-                showMessage("تم تحميل الجدول بنجاح محليًا! 📤 (يعمل بدون إنترنت)", "success");
-            } else {
-                showMessage("تم تحميل الجدول بنجاح! 📤", "success");
-            }
+            showMessage("تم تحميل الجدول بنجاح! 📤", "success");
         } catch (error) {
             showMessage("خطأ في قراءة الملف", "error");
-            console.error("خطأ في التحميل:", error);
         }
     };
     reader.readAsText(file);
@@ -505,17 +487,12 @@ function loadData() {
         if (savedCompleted) completedTasks = new Set(JSON.parse(savedCompleted));
         if (savedPendingSync) pendingSyncData = JSON.parse(savedPendingSync);
         console.log("📂 تم تحميل البيانات:", lessons.length, "دروس");
-        console.log("🔄 تغييرات معلقة:", pendingSyncData.length);
-        if (lessons.length > 0) {
-            console.log("✅ سلامة البيانات: تم التحقق بنجاح");
-        }
     } catch (e) {
         console.error("❌ خطأ في التحميل:", e);
-        showMessage("تحذير: فشل تحميل بعض البيانات", "error");
     }
 }
 
-// Render Calendar
+// Render Calendar (UPDATED to pass details)
 function renderCalendar() {
     const container = document.getElementById("calendar-container");
     document.getElementById("lesson-count").textContent = lessons.length;
@@ -536,6 +513,7 @@ function renderCalendar() {
         if (!schedule.has(lessonDate)) schedule.set(lessonDate, []);
         schedule.get(lessonDate).push({
             name: lesson.name,
+            details: lesson.details, // Pass details here
             type: "new",
             isFirst: idx === 0,
             review: 0,
@@ -547,6 +525,7 @@ function renderCalendar() {
             if (!schedule.has(reviewDate)) schedule.set(reviewDate, []);
             schedule.get(reviewDate).push({
                 name: lesson.name,
+                details: lesson.details, // Pass details here too
                 type: "review",
                 review: rIdx + 1,
                 interval,
@@ -583,7 +562,6 @@ function renderMonth(date, schedule) {
     const monthName = date.toLocaleDateString("ar", { month: "long", year: "numeric" });
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-
     const dayNames = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
     let html = `
@@ -639,9 +617,10 @@ function renderMonth(date, schedule) {
             if (isCompleted) {
                 className += " opacity-60 line-through";
             }
+            // Use encodeURIComponent to safeguard JSON stringify inside attribute
             html += `
-                <div class="${className}" data-task='${JSON.stringify(taskData)}'>
-                    ${displayText}${isCompleted ? "" : ""}
+                <div class="${className}" data-task='${JSON.stringify(taskData).replace(/'/g, "&#39;")}'>
+                    ${displayText}
                 </div>
             `;
         });
@@ -656,7 +635,7 @@ function renderMonth(date, schedule) {
     return html;
 }
 
-// Task Modal
+// Task Modal (UPDATED to show details)
 function showTaskModal(task) {
     const modal = document.getElementById("task-modal");
     const content = document.getElementById("modal-content");
@@ -673,23 +652,13 @@ function showTaskModal(task) {
         "العلم يرفع بيوتاً لا عماد لها 📚",
         "النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪",
         "من صبر ظفر، ومن ثابر أدرك 🎯",
-        "قطرة الماء تثقب الصخر بالتكرار "
-        'العلم يرفع بيوتاً لا عماد لها، والجهل يهدم بيوت العز والكرم 📚',
-        'النجاح هو حصيلة مجهودات صغيرة تتكرر يومياً 💪',
-        'من صبر ظفر، ومن ثابر أدرك 🎯',
-        'قطرة الماء تثقب الصخر، لا بالعنف ولكن بالتكرار 💧',
-        'كل يوم تراجع فيه دروسك هو استثمار في مستقبلك 🌱',
-        'المثابرة والإصرار مفتاح كل نجاح 🔑',
-        'الطريق إلى القمة ليس بالسهل، لكنه يستحق العناء 🏔️',
-        'العبقرية هي 1% إلهام و99% اجتهاد - توماس إديسون ⚡',
-        'اليوم صعب، غداً أصعب، لكن بعد غدٍ ستشرق الشمس 🌅',
-        'لا تؤجل عمل اليوم إلى الغد، فالنجاح يكمن في الاستمرارية ⏰',
-        'من يصعد السلم درجة درجة يصل إلى القمة 🪜',
-        'التكرار يعلم الشطار، والمراجعة تثبت المعرفة 🔄',
-        'كل مراجعة تقربك خطوة من إتقان العلم 📖',
-        'الفشل ليس سقوطاً، بل هو عدم النهوض بعد السقوط 🦅'
+        "قطرة الماء تثقب الصخر بالتكرار 💧",
+        "كل يوم تراجع فيه دروسك هو استثمار في مستقبلك 🌱",
+        "المثابرة والإصرار مفتاح كل نجاح 🔑",
+        "الطريق إلى القمة ليس بالسهل، لكنه يستحق العناء 🏔️"
     ];
     const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    
     let badgeClass = "bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300";
     let badgeText = "درس جديد";
     if (task.type === "review") {
@@ -697,8 +666,9 @@ function showTaskModal(task) {
         badgeText = `مراجعة رقم ${task.review}`;
     } else if (task.isFirst) {
         badgeClass = "bg-blue-500 text-white dark:bg-theme-accent dark:text-theme-dark-bg";
-        badgeText = "درسك الأول! ��";
+        badgeText = "درسك الأول! 🎉";
     }
+
     let detailsHTML = `
         <div class="space-y-3">
             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
@@ -730,6 +700,7 @@ function showTaskModal(task) {
                 </div>
             </div>
     `;
+
     if (task.type === "review") {
         const originalDate = new Date(task.originalDate + "T00:00:00").toLocaleDateString("ar", { 
             year: "numeric", month: "long", day: "numeric" 
@@ -758,6 +729,7 @@ function showTaskModal(task) {
             </div>
         `;
     }
+
     detailsHTML += `
             <div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-black/20 rounded-lg">
                 <span class="text-2xl">💡</span>
@@ -766,6 +738,18 @@ function showTaskModal(task) {
                     <p class="font-semibold dark:text-theme-text">${randomQuote}</p>
                 </div>
             </div>
+            
+            ${task.details ? `
+            <div class="mt-4 border-t-2 border-dashed dark:border-theme-border/50 pt-4">
+                <div class="bg-white dark:bg-theme-dark-bg/40 p-4 rounded-lg border dark:border-theme-border/30">
+                    <p class="text-xs font-bold text-gray-500 dark:text-emerald-400 mb-2 uppercase tracking-wider">📝 تفاصيل وملاحظات الدرس:</p>
+                    <div class="text-gray-700 dark:text-gray-200 leading-relaxed text-sm space-y-1">
+                        ${parseMarkdown(task.details)}
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
             <div class="mt-6 pt-6 border-t-2 dark:border-theme-border">
                 <label class="flex items-center gap-3 p-4 bg-gray-50 dark:bg-black/20 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-black/30 transition-colors">
                     <input type="checkbox" ${isCompleted ? "checked" : ""} 
@@ -822,15 +806,3 @@ setInterval(() => {
         syncPendingData();
     }
 }, 30000);
-
-console.log("🔍 فحص سلامة البيانات المحلية...");
-if (lessons.length === 0 && completedTasks.size === 0) {
-    console.log("ℹ️ لا توجد بيانات محفوظة - تطبيق جديد");
-} else {
-    console.log("✅ تم التحقق من سلامة البيانات بنجاح");
-}
-
-console.log("✅ التطبيق جاهز للعمل في وضع Offline-First!");
-console.log("📱 حالة الاتصال:", isOnline ? "متصل" : "غير متصل");
-console.log("💾 البيانات المحلية:", lessons.length, "دروس،", completedTasks.size, "مهام مكتملة");
-console.log("🔄 تغييرات معلقة للمزامنة:", pendingSyncData.length);
